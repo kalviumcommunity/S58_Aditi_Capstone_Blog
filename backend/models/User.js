@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -12,12 +12,23 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: false,
+    select: false, // 🔐 Prevents password from being returned in queries
   },
   googleId: {
     type: String,
-    required: false,
   },
+  bio: {
+    type: String,
+    default: "",
+    trim: true,
+    maxlength: 200,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("User", userSchema);
