@@ -12,7 +12,7 @@ const articleSchema = new mongoose.Schema(
     description: { type: String, required: true },
     content: { type: String, required: true },
     author: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.OnjectId,
       ref: "User",
       required: true,
     },

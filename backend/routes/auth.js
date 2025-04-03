@@ -1,28 +1,24 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
 const passport = require("passport");
+const User = require("../models/User");
+
 const router = express.Router();
 require("../config/passport");
 
-// User Sign Up
+//sign up
 router.post("/signup", async (req, res) => {
-  const { name, email, password, bio } = req.body;
+  const { name, email, password } = req.body;
   try {
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser)
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "User already exits" });
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Create new user
-    const newUser = new User({ name, email, password: hashedPassword, bio });
+    const newUser = new User({ name, email, password: hashedPassword });
     await newUser.save();
 
-    // Generate JWT Token
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -33,13 +29,12 @@ router.post("/signup", async (req, res) => {
   }
 });
 
-// User Login
+// login route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
-    // ❗ Fix: select password manually
-    const user = await User.findOne({ email }).select("+password");
-    if (!user) return res.status(400).json({ message: "User does not exist" });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "User does not exits" });
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect)
@@ -55,22 +50,17 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// Start Google OAuth process
+// google Oauth Routes
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-// Handle Google OAuth callback
 router.get(
   "/google/callback",
   passport.authenticate("google", { session: false }),
   (req, res) => {
     const { token } = req.user;
-
-    // Redirect to frontend with the token
     res.redirect(`http://localhost:5173/google-success?token=${token}`);
   }
 );
-
-module.exports = router;

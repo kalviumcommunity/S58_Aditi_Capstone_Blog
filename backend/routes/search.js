@@ -3,18 +3,19 @@ const router = express.Router();
 const Article = require("../models/Article");
 const User = require("../models/User");
 
-// Search articles and users
+// Unified search route
 router.get("/", async (req, res) => {
   const query = req.query.q;
 
   if (!query) return res.status(400).json({ message: "Search query missing" });
 
   try {
-    // Search articles by title or description
+    // Search articles by title, description, or content
     const articles = await Article.find({
       $or: [
         { title: { $regex: query, $options: "i" } },
         { description: { $regex: query, $options: "i" } },
+        { content: { $regex: query, $options: "i" } },
       ],
     }).populate("author", "name");
 

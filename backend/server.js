@@ -6,31 +6,36 @@ const passport = require("passport");
 require("./config/passport");
 
 dotenv.config();
-const app = express();
+const app = express;
 
-// Middleware
-app.use(express.json());
+//middleware
+app.request(express.json());
 app.use(cors());
 app.use(passport.initialize());
 
-// Routes
+//Routes
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 
 const articleRoutes = require("./routes/articles");
-app.use("/api/articles", articleRoutes);
+app.use("api/article", articleRoutes);
 
-const userRoutes = require("./routes/users"); // ✅ Added users route
-app.use("/api/users", userRoutes); // ✅ Now accessible at /api/users
+const userRoutes = require("./routes/user");
+app.use("/api/users", userRoutes);
 
 const searchRoutes = require("./routes/search");
 app.use("/api/search", searchRoutes);
 
-// MongoDB Connection
+app.use("/api/auth", authRoutes);
+app.use("/api/articles", articleRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/search", searchRoutes);
+
+//MongoDB connection
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

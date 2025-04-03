@@ -22,10 +22,23 @@ router.get("/", async (req, res) => {
   }
 });
 
-// POST a new article (protected)
+// GET a single article by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id).populate(
+      "author",
+      "name"
+    );
+    if (!article) return res.status(404).json({ message: "Article not found" });
+    res.json(article);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Create a new article (protected)
 router.post("/", authenticateToken, async (req, res) => {
   const { title, description, content } = req.body;
-
   const newArticle = new Article({
     title,
     description,
@@ -41,11 +54,10 @@ router.post("/", authenticateToken, async (req, res) => {
   }
 });
 
-// Update article
+// Update article (only author)
 router.put("/:id", authenticateToken, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
-
     if (!article) return res.status(404).json({ message: "Article not found" });
     if (article.author.toString() !== req.user.id)
       return res.status(403).json({ message: "Unauthorized" });
@@ -53,23 +65,19 @@ router.put("/:id", authenticateToken, async (req, res) => {
     const updated = await Article.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-
     res.json(updated);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// Delete article
+// Delete article (only author)
 router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
-
     if (!article) return res.status(404).json({ message: "Article not found" });
-
-    if (article.author.toString() !== req.user.id) {
+    if (article.author.toString() !== req.user.id)
       return res.status(403).json({ message: "Unauthorized" });
-    }
 
     await Article.findByIdAndDelete(req.params.id);
     res.json({ message: "Article deleted successfully" });
@@ -78,41 +86,29 @@ router.delete("/:id", authenticateToken, async (req, res) => {
   }
 });
 
-// Like article
+// Like or Unlike an Article
 router.post("/:id/like", authenticateToken, async (req, res) => {
-  const article = await Article.findById(req.params.id);
-  if (!article) return res.status(404).json({ message: "Article not found" });
+  try {
+    const article = await Article.findById(req.params.id);
+    if (!article) return res.status(404).json({ message: "Article not found" });
 
-  const hasLiked = article.likes.includes(req.user.id);
-  if (hasLiked) {
-    article.likes = article.likes.filter((id) => id.toString() !== req.user.id);
-  } else {
-    article.likes.push(req.user.id);
+    const userId = req.user.id;
+    const hasLiked = article.likes.includes(userId);
+
+    if (hasLiked) {
+      article.likes = article.likes.filter((id) => id.toString() !== userId);
+    } else {
+      article.likes.push(userId);
+    }
+
+    await article.save();
+    res.json({ likes: article.likes.length });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-
-  await article.save();
-  res.json({ likes: article.likes.length });
 });
 
-// Bookmark article
-router.post("/:id/bookmark", authenticateToken, async (req, res) => {
-  const article = await Article.findById(req.params.id);
-  if (!article) return res.status(404).json({ message: "Article not found" });
-
-  const hasBookmarked = article.bookmarks.includes(req.user.id);
-  if (hasBookmarked) {
-    article.bookmarks = article.bookmarks.filter(
-      (id) => id.toString() !== req.user.id
-    );
-  } else {
-    article.bookmarks.push(req.user.id);
-  }
-
-  await article.save();
-  res.json({ bookmarks: article.bookmarks.length });
-});
-
-// Add comment
+// Add a comment to an article
 router.post("/:id/comment", authenticateToken, async (req, res) => {
   try {
     const { text } = req.body;
@@ -129,7 +125,7 @@ router.post("/:id/comment", authenticateToken, async (req, res) => {
   }
 });
 
-// Get comments
+// Get all comments for an article
 router.get("/:id/comments", async (req, res) => {
   try {
     const article = await Article.findById(req.params.id).populate(
@@ -143,20 +139,3 @@ router.get("/:id/comments", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
-// GET a single article by ID
-router.get("/:id", async (req, res) => {
-  try {
-    const article = await Article.findById(req.params.id).populate(
-      "author",
-      "name"
-    );
-    if (!article) return res.status(404).json({ message: "Article not found" });
-
-    res.json(article);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-module.exports = router;
