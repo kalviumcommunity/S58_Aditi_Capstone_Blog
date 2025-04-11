@@ -3,6 +3,7 @@ import axios from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
 import ArticleCard from "../components/ArticleCard";
 import { API_URL } from "../config";
+import "./Home.css";
 
 const Home = () => {
   const [articles, setArticles] = useState([]);
@@ -21,7 +22,7 @@ const Home = () => {
       setPage((prevPage) => prevPage + 1);
 
       if (newArticles.length < LIMIT) {
-        setHasMore(false); // No more articles to fetch
+        setHasMore(false);
       }
     } catch (error) {
       console.error("Error fetching articles:", error);
@@ -34,17 +35,14 @@ const Home = () => {
   }, []);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
-      {/* Main Feed */}
-      <div style={{ flex: 2, marginRight: "20px" }}>
+    <div className="home-container">
+      <div className="feed">
         <InfiniteScroll
           dataLength={articles.length}
           next={fetchMoreArticles}
           hasMore={hasMore}
           loader={<p>Loading more articles...</p>}
-          endMessage={
-            <p style={{ textAlign: "center" }}>You've reached the end!</p>
-          }
+          endMessage={<p className="end-message">You've reached the end!</p>}
         >
           {articles.length > 0 ? (
             articles.map((article) => (
@@ -56,15 +54,12 @@ const Home = () => {
         </InfiniteScroll>
       </div>
 
-      {/* Sidebar */}
-      <div
-        style={{ flex: 1, borderLeft: "1px solid #ddd", paddingLeft: "20px" }}
-      >
+      <div className="sidebar">
         <h3>Trending on Medium</h3>
         <ul>
-          <li>1. Why MERN Stack is the Future</li>
-          <li>2. React Hooks You Should Know</li>
-          <li>3. The Rise of NoSQL Databases</li>
+          <li>Why MERN Stack is the Future</li>
+          <li>React Hooks You Should Know</li>
+          <li>The Rise of NoSQL Databases</li>
         </ul>
       </div>
     </div>

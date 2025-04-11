@@ -78,3 +78,15 @@ router.post("/:id/unfollow", authenticateToken, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// ✅ Get All Registered Users
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find().select("name email"); // optional: add more fields
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+module.exports = router;

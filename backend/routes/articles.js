@@ -54,7 +54,6 @@ router.post("/", authenticateToken, async (req, res) => {
   }
 });
 
-// Update article (only author)
 router.put("/:id", authenticateToken, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);

@@ -1,0 +1,64 @@
+.edit-container {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: "sohne", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.edit-heading {
+  font-size: 32px;
+  margin-bottom: 20px;
+  font-family: "gt-super", Georgia, serif;
+  color: #242424;
+}
+
+.edit-error {
+  color: red;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-input {
+  font-size: 20px;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+  outline: none;
+}
+
+.edit-input.title {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.edit-input.description {
+  font-size: 18px;
+  color: #555;
+}
+
+.edit-editor {
+  margin-bottom: 20px;
+  height: 300px;
+  background: #fff;
+}
+
+.edit-submit {
+  background-color: #000;
+  color: #fff;
+  padding: 12px 0;
+  border: none;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.edit-submit:hover {
+  background-color: #333;
+}

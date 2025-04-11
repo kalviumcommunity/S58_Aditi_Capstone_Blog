@@ -9,6 +9,7 @@ import Signup from "./pages/Signup";
 import GoogleSuccess from "./pages/GoogleSuccess";
 import PrivateRoute from "./utils/PrivateRoute";
 import SearchResults from "./pages/SearchResults"; // ✅ Don't forget this
+import EditArticle from "./pages/EditArticle";
 
 function App() {
   return (
@@ -20,12 +21,19 @@ function App() {
         <Route path="/profile/:username" element={<Profile />} />
         <Route path="/profile/:id/" element={<Profile />} />
         <Route path="/search" element={<SearchResults />} />{" "}
-        {/* ✅ Correct location */}
         <Route
           path="/write"
           element={
             <PrivateRoute>
               <Writer />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit/:id"
+          element={
+            <PrivateRoute>
+              <EditArticle />
             </PrivateRoute>
           }
         />

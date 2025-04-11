@@ -1,0 +1,49 @@
+/* Home.css */
+
+.home-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  color: #222;
+}
+
+.feed {
+  flex: 2;
+  margin-right: 2rem;
+}
+
+.sidebar {
+  flex: 1;
+  border-left: 1px solid #e0e0e0;
+  padding-left: 2rem;
+}
+
+.sidebar h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.sidebar ul {
+  list-style: decimal;
+  padding-left: 1rem;
+  color: #777;
+}
+
+.sidebar li {
+  margin-bottom: 0.5rem;
+  transition: color 0.2s;
+  cursor: pointer;
+}
+
+.sidebar li:hover {
+  color: #111;
+}
+
+.end-message {
+  text-align: center;
+  color: #888;
+  margin-top: 2rem;
+}

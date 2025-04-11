@@ -28,6 +28,7 @@ passport.use(
           expiresIn: "1h",
         });
 
+        // ✅ Pass both user and token manually to callback
         done(null, { user, token });
       } catch (err) {
         done(err, false);
@@ -35,16 +36,3 @@ passport.use(
     }
   )
 );
-
-passport.searializeUser((user, done) => {
-  done(null, user.user._id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    done(null, user);
-  } catch (err) {
-    done(err, null);
-  }
-});
