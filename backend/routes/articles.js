@@ -3,7 +3,6 @@ const router = express.Router();
 const Article = require("../models/Article");
 const authenticateToken = require("../middleware/authMiddleware");
 
-// GET all articles with pagination
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -36,7 +35,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Create a new article (protected)
 router.post("/", authenticateToken, async (req, res) => {
   const { title, description, content } = req.body;
   const newArticle = new Article({
@@ -70,7 +68,6 @@ router.put("/:id", authenticateToken, async (req, res) => {
   }
 });
 
-// Delete article (only author)
 router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const article = await Article.findById(req.params.id);
