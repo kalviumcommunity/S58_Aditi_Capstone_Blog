@@ -21,13 +21,12 @@ router.get("/", async (req, res) => {
   }
 });
 
-// GET a single article by ID
+// populating
 router.get("/:id", async (req, res) => {
   try {
-    const article = await Article.findById(req.params.id).populate(
-      "author",
-      "name"
-    );
+    const article = await Article.findById(req.params.id)
+      .populate("author", "name")
+      .populate("comments.user", "name");
     if (!article) return res.status(404).json({ message: "Article not found" });
     res.json(article);
   } catch (err) {
