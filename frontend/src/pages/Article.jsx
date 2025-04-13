@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../config";
-import "./Article.css"; // ✅ new stylesheet
-
+import "./Article.css";
 const Article = () => {
   const { id } = useParams();
   const navigate = useNavigate();
