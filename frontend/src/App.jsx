@@ -8,7 +8,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import GoogleSuccess from "./pages/GoogleSuccess";
 import PrivateRoute from "./utils/PrivateRoute";
-import SearchResults from "./pages/SearchResults"; // ✅ Don't forget this
+import SearchResults from "./pages/SearchResults";
 import EditArticle from "./pages/EditArticle";
 
 function App() {
