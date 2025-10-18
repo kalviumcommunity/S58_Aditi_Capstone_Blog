@@ -1,20 +1,50 @@
+<<<<<<< HEAD
 import { Link, useNavigate } from "react-router-dom";
 import { isLoggedIn, logout } from "../utils/auth";
 import { useState } from "react";
+=======
+// components/Navbar.jsx
+import { Link, useNavigate } from "react-router-dom";
+import { isLoggedIn, logout } from "../utils/auth";
+import { useEffect, useState } from "react";
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
 import "./Navbar.css";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+<<<<<<< HEAD
   const [showSearchInput, setShowSearchInput] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate("/");
+=======
+  const [initial, setInitial] = useState("U");
+  const userId = localStorage.getItem("userId"); // stored on login/signup
+
+  useEffect(() => {
+    // Try to derive a nice initial if you ever store user info
+    // e.g. localStorage.setItem('user', JSON.stringify({ name, email }))
+    try {
+      const userJson = localStorage.getItem("user");
+      if (userJson) {
+        const user = JSON.parse(userJson);
+        const name = (user?.name || "").trim();
+        if (name) setInitial(name[0].toUpperCase());
+      }
+    } catch (_) {}
+  }, []);
+
+  const handleLogout = () => {
+    // logout() already redirects to /login
+    logout();
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     if (searchQuery.trim()) {
       navigate(`/search?q=${searchQuery}`);
       setSearchQuery("");
@@ -26,6 +56,15 @@ const Navbar = () => {
     setShowSearchInput(!showSearchInput);
   };
 
+=======
+    const q = searchQuery.trim();
+    if (q) {
+      navigate(`/search?q=${encodeURIComponent(q)}`);
+      setSearchQuery("");
+    }
+  };
+
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
   return (
     <nav className="navbar">
       {/* Left - Logo and Search */}
@@ -34,26 +73,44 @@ const Navbar = () => {
           Familiar
         </Link>
 
+<<<<<<< HEAD
         {/* Search moved into navbar-left */}
         <form onSubmit={handleSearch} className="simple-search-form">
+=======
+        <form
+          onSubmit={handleSearch}
+          className="simple-search-form"
+          role="search"
+        >
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
           <input
             type="text"
             placeholder="Search Medium"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+<<<<<<< HEAD
+=======
+            aria-label="Search"
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
           />
         </form>
       </div>
 
+<<<<<<< HEAD
       {/* Center section removed or can be used for other elements */}
       <div className="navbar-center">
         {/* This can be empty or used for other elements */}
       </div>
+=======
+      {/* Center (unused for now) */}
+      <div className="navbar-center" />
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
 
       {/* Right - Links & Icons */}
       <div className="navbar-right">
         {isLoggedIn() ? (
           <>
+<<<<<<< HEAD
             <Link to="/write" className="write-link">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path
@@ -81,6 +138,60 @@ const Navbar = () => {
                 <Link to="/profile" className="dropdown-item">
                   Profile
                 </Link>
+=======
+            <Link to="/write" className="write-link" aria-label="Write a story">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M14 4a.5.5 0 0 0 0-1v1zm7 6a.5.5 0 0 0-1 0h1zm-7-7H4v1h10V3zM3 4v16h1V4H3zm1 17h16v-1H4v1zm17-1V10h-1v10h1zm-1 1a1 1 0 0 0 1-1h-1v1zM3 20a1 1 0 0 0 1 1v-1H3zM4 3a1 1 0 0 0-1 1h1V3z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M17.5 4.5l-8.46 8.46a.25.25 0 0 0-.06.1l-.82 2.47c-.07.2.12.38.31.31l2.47-.82a.25.25 0 0 0 .1-.06L19.5 6.5m-2-2l2.32-2.32c.1-.1.26-.1.36 0l1.64 1.64c.1.1.1.26 0 .36L19.5 6.5"
+                  fill="currentColor"
+                />
+              </svg>
+              <span>Write</span>
+            </Link>
+
+            <button
+              className="navbar-icon bell-icon"
+              aria-label="Notifications"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+
+            <div className="profile-menu">
+              <div className="profile-circle" title="Account">
+                {initial}
+              </div>
+              <div className="profile-dropdown">
+                {userId ? (
+                  <Link to={`/profile/${userId}`} className="dropdown-item">
+                    Profile
+                  </Link>
+                ) : (
+                  <Link to="/profile" className="dropdown-item">
+                    Profile
+                  </Link>
+                )}
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
                 <Link to="/settings" className="dropdown-item">
                   Settings
                 </Link>

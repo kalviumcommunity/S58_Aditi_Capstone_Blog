@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import { useState } from "react";
+=======
+// pages/Writer.jsx
+import { useMemo, useState } from "react";
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
 import axios from "axios";
 import { API_URL } from "../config";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +17,7 @@ const Write = () => {
     description: "",
     content: "",
   });
+<<<<<<< HEAD
 
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -23,10 +29,42 @@ const Write = () => {
 
   const handleContentChange = (value) => {
     setArticle({ ...article, content: value });
+=======
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  // axios instance with base + auth header + 401 handling
+  const api = useMemo(() => {
+    const inst = axios.create({
+      baseURL: API_URL,
+      headers: { "Content-Type": "application/json" },
+    });
+    if (token) inst.defaults.headers.common.Authorization = `Bearer ${token}`;
+    inst.interceptors.response.use(
+      (r) => r,
+      (err) => {
+        if (err?.response?.status === 401) navigate("/login");
+        return Promise.reject(err);
+      }
+    );
+    return inst;
+  }, [token, navigate]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setArticle((a) => ({ ...a, [name]: value }));
+  };
+
+  const handleContentChange = (value) => {
+    setArticle((a) => ({ ...a, content: value }));
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+<<<<<<< HEAD
 
     try {
       const response = await axios.post(`${API_URL}/articles`, article, {
@@ -37,6 +75,31 @@ const Write = () => {
       navigate(`/article/${newArticleId}`);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to post article");
+=======
+    setError("");
+
+    const payload = {
+      title: article.title.trim(),
+      description: article.description.trim(),
+      content: article.content, // rich text; don't trim HTML
+    };
+
+    if (!payload.title || !payload.description || !payload.content) {
+      setError("Title, description, and content are required.");
+      return;
+    }
+
+    try {
+      const { data } = await api.post(`/articles`, payload);
+      navigate(`/article/${data._id}`, { replace: true });
+    } catch (err) {
+      const msg =
+        err.response?.data?.message ||
+        (err.code === "ERR_NETWORK"
+          ? "Network error: API unreachable"
+          : "Failed to post article");
+      setError(msg);
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
     }
   };
 
@@ -59,9 +122,16 @@ const Write = () => {
         <input
           type="text"
           name="description"
+<<<<<<< HEAD
           placeholder="Short description (optional)"
           value={article.description}
           onChange={handleChange}
+=======
+          placeholder="Short description"
+          value={article.description}
+          onChange={handleChange}
+          required
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
           className="writer-input description-input"
         />
 
