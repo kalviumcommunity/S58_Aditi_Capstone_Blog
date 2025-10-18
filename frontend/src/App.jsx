@@ -8,7 +8,11 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import GoogleSuccess from "./pages/GoogleSuccess";
 import PrivateRoute from "./utils/PrivateRoute";
+<<<<<<< HEAD
 import SearchResults from "./pages/SearchResults"; // ✅ Don't forget this
+=======
+import SearchResults from "./pages/SearchResults";
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
 import EditArticle from "./pages/EditArticle";
 
 function App() {

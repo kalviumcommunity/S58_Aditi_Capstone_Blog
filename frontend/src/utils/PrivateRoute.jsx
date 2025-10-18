@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Navigate } from "react-router-dom";
 
 /**
@@ -13,6 +14,19 @@ const PrivateRoute = ({ children }) => {
   }
 
   // ✅ Token exists — allow access
+=======
+import { Navigate, useLocation } from "react-router-dom";
+import { isLoggedIn } from "./auth";
+
+const PrivateRoute = ({ children }) => {
+  const location = useLocation();
+
+  if (!isLoggedIn()) {
+    // redirect back to where user tried to go, after login
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+>>>>>>> 094d29a (Disabled author likes, added Author badge in comments)
   return children;
 };
 
