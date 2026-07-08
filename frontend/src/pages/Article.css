@@ -184,8 +184,20 @@
   color: #6b6b6b;
 }
 
-.engage-icon.liked {
-  color: #5c1a2b;
+.engage-icon {
+  color: #6b6b6b;
+}
+
+.engage-icon svg {
+  fill: none;
+}
+
+.engage-icon.liked-active {
+  color: #c0392b;
+}
+
+.engage-icon.liked-active svg {
+  fill: #c0392b;
 }
 
 .engage-bookmark {

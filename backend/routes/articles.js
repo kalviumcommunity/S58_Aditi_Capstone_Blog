@@ -97,7 +97,7 @@ router.post("/:id/like", authenticateToken, async (req, res) => {
     }
 
     await article.save();
-    res.json({ likes: article.likes.length });
+    res.json({ likes: article.likes, count: article.likes.length });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -125,7 +125,7 @@ router.get("/:id/comments", async (req, res) => {
   try {
     const article = await Article.findById(req.params.id).populate(
       "comments.user",
-      "name"
+      "name",
     );
     if (!article) return res.status(404).json({ message: "Article not found" });
 

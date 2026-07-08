@@ -23,7 +23,6 @@ const HeartIcon = () => (
     width="19"
     height="19"
     viewBox="0 0 24 24"
-    fill="none"
     stroke="currentColor"
     strokeWidth="1.8"
     strokeLinecap="round"
@@ -195,7 +194,9 @@ const Article = () => {
 
       <div className="article-engagement">
         <button className="engage-btn" onClick={handleLike}>
-          <span className="engage-icon liked">
+          <span
+            className={`engage-icon ${article.likes.includes(userId) ? "liked-active" : ""}`}
+          >
             <HeartIcon />
           </span>
           {article.likes.length}

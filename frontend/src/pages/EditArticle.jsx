@@ -6,6 +6,11 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./EditArticle.css";
 
+const cleanContent = (html) => {
+  if (!html) return "";
+  return html.replace(/<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "").trim();
+};
+
 const EditArticle = () => {
   const { id } = useParams();
   const [article, setArticle] = useState(null);
@@ -31,25 +36,37 @@ const EditArticle = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`${API_URL}/articles/${id}`, article, {
+      const payload = {
+        ...article,
+        content: cleanContent(article.content),
+      };
+
+      await axios.put(`${API_URL}/articles/${id}`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       navigate(`/article/${id}`);
     } catch (err) {
+      console.error("Failed to update article", err);
       setError("Failed to update article");
     }
   };
 
-  if (!article) return <p>Loading article...</p>;
+  if (!article) return <p className="edit-loading">Loading article...</p>;
 
   return (
     <div className="edit-container">
-      <h2 className="edit-heading">Edit your story</h2>
-      {error && <p className="edit-error">{error}</p>}
-
       <form onSubmit={handleSubmit} className="edit-form">
+        <div className="edit-topbar">
+          <span className="edit-label">Editing</span>
+          <button type="submit" className="edit-submit">
+            Save changes
+          </button>
+        </div>
+
+        {error && <p className="edit-error">{error}</p>}
+
         <input
           type="text"
           name="title"
@@ -65,19 +82,16 @@ const EditArticle = () => {
           name="description"
           value={article.description}
           onChange={handleChange}
-          placeholder="Short description"
+          placeholder="Short description (optional)"
           className="edit-input description"
         />
 
         <ReactQuill
           value={article.content}
           onChange={handleContentChange}
+          placeholder="Tell your story..."
           className="edit-editor"
         />
-
-        <button type="submit" className="edit-submit">
-          Save Changes
-        </button>
       </form>
     </div>
   );
