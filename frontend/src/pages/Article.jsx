@@ -14,6 +14,11 @@ const getReadTime = (html) => {
   return `${mins} min read`;
 };
 
+const cleanContent = (html) => {
+  if (!html) return "";
+  return html.replace(/<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "").trim();
+};
+
 const HeartIcon = () => (
   <svg
     width="19"
@@ -176,7 +181,7 @@ const Article = () => {
 
       <div
         className="article-content"
-        dangerouslySetInnerHTML={{ __html: article.content }}
+        dangerouslySetInnerHTML={{ __html: cleanContent(article.content) }}
       />
 
       {isOwner && (

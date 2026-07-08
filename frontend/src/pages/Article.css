@@ -100,12 +100,6 @@
   margin-bottom: 0;
 }
 
-/* keep Quill's empty spacer paragraphs from blowing out the layout */
-.article-content p:empty {
-  margin: 0;
-  min-height: 0.6rem;
-}
-
 .article-content img {
   max-width: 100%;
   height: auto;
