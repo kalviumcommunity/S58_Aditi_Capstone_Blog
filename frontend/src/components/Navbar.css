@@ -189,7 +189,7 @@
 
 .profile-dropdown {
   position: absolute;
-  top: 40px;
+  top: 44px;
   right: 0;
   background-color: white;
   border-radius: 4px;
@@ -200,13 +200,13 @@
   overflow: hidden;
 }
 
+.profile-dropdown.open {
+  display: block;
+}
+
 a {
   text-decoration: none;
   color: black;
-}
-
-.profile-menu:hover .profile-dropdown {
-  display: block;
 }
 
 .dropdown-item {
