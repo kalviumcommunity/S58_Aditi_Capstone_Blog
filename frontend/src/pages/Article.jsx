@@ -3,6 +3,62 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../config";
 import "./Article.css";
+
+const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : "?");
+
+const getReadTime = (html) => {
+  if (!html) return "1 min read";
+  const text = html.replace(/<[^>]+>/g, " ");
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  const mins = Math.max(1, Math.round(words / 200));
+  return `${mins} min read`;
+};
+
+const HeartIcon = () => (
+  <svg
+    width="19"
+    height="19"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M19.5 12.6 12 20l-7.5-7.4a5 5 0 1 1 7.5-6.6 5 5 0 1 1 7.5 6.6z" />
+  </svg>
+);
+
+const CommentIcon = () => (
+  <svg
+    width="19"
+    height="19"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7A8.4 8.4 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z" />
+  </svg>
+);
+
+const BookmarkIcon = () => (
+  <svg
+    width="19"
+    height="19"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+  </svg>
+);
+
 const Article = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -34,7 +90,7 @@ const Article = () => {
       await axios.post(
         `${API_URL}/articles/${id}/comment`,
         { text: commentText },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setCommentText("");
       fetchArticle();
@@ -59,7 +115,7 @@ const Article = () => {
       await axios.post(
         `${API_URL}/articles/${id}/like`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       fetchArticle();
     } catch (err) {
@@ -72,7 +128,7 @@ const Article = () => {
       await axios.post(
         `${API_URL}/articles/${id}/bookmark`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       fetchArticle();
     } catch (err) {
@@ -80,30 +136,51 @@ const Article = () => {
     }
   };
 
-  if (!article) return <p>Loading...</p>;
+  if (!article) return <p className="article-loading">Loading...</p>;
+
+  const isOwner = article.author._id === userId;
 
   return (
     <div className="article-container">
-      <h1 className="article-title">{article.title}</h1>
-      <p className="article-description">{article.description}</p>
+      <header className="article-header">
+        <h1 className="article-title">{article.title}</h1>
+        {article.description && (
+          <p className="article-description">{article.description}</p>
+        )}
 
-      <div className="article-meta">
-        <span
-          className="article-author"
-          onClick={() => navigate(`/profile/${article.author._id}`)}
-        >
-          {article.author.name}
-        </span>{" "}
-        · {new Date(article.date).toLocaleDateString()}
-      </div>
+        <div className="article-byline">
+          <div
+            className="byline-avatar"
+            onClick={() => navigate(`/profile/${article.author._id}`)}
+          >
+            {getInitial(article.author.name)}
+          </div>
+          <div className="byline-info">
+            <span
+              className="byline-name"
+              onClick={() => navigate(`/profile/${article.author._id}`)}
+            >
+              {article.author.name}
+            </span>
+            <span className="byline-meta">
+              {new Date(article.date).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}{" "}
+              · {getReadTime(article.content)}
+            </span>
+          </div>
+        </div>
+      </header>
 
       <div
         className="article-content"
         dangerouslySetInnerHTML={{ __html: article.content }}
       />
 
-      {article.author._id === userId && (
-        <div className="article-actions">
+      {isOwner && (
+        <div className="article-owner-actions">
           <button onClick={() => navigate(`/edit/${id}`)}>Edit</button>
           <button onClick={handleDelete} className="delete-btn">
             Delete
@@ -111,36 +188,85 @@ const Article = () => {
         </div>
       )}
 
-      <div className="article-reactions">
-        <button onClick={handleLike}>❤️ {article.likes.length}</button>
-        <button onClick={handleBookmark}>🔖 {article.bookmarks.length}</button>
+      <div className="article-engagement">
+        <button className="engage-btn" onClick={handleLike}>
+          <span className="engage-icon liked">
+            <HeartIcon />
+          </span>
+          {article.likes.length}
+        </button>
+        <span className="engage-btn engage-static">
+          <span className="engage-icon">
+            <CommentIcon />
+          </span>
+          {comments.length}
+        </span>
+        <button
+          className="engage-btn engage-bookmark"
+          onClick={handleBookmark}
+          aria-label="Bookmark"
+        >
+          <span className="engage-icon">
+            <BookmarkIcon />
+          </span>
+          {article.bookmarks.length}
+        </button>
       </div>
 
-      <div className="article-comments">
-        <h3>Responses</h3>
-        {comments.length > 0 ? (
-          comments.map((comment) => (
-            <p key={comment._id}>
-              <strong>{comment.user.name}:</strong> {comment.text}
-            </p>
-          ))
-        ) : (
-          <p>No comments yet.</p>
-        )}
+      <section className="responses-section">
+        <h3 className="responses-title">Responses ({comments.length})</h3>
 
         {token && (
-          <form onSubmit={handleCommentSubmit} className="comment-form">
-            <input
-              type="text"
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder="What are your thoughts?"
-              required
-            />
-            <button type="submit">Respond</button>
-          </form>
+          <div className="comment-composer">
+            <div className="composer-avatar">
+              {getInitial(article.author.name)}
+            </div>
+            <form className="composer-body" onSubmit={handleCommentSubmit}>
+              <textarea
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="What are your thoughts?"
+                rows="2"
+                required
+              />
+              <div className="composer-actions">
+                <button type="submit">Respond</button>
+              </div>
+            </form>
+          </div>
         )}
-      </div>
+
+        <div className="comment-list">
+          {comments.length > 0 ? (
+            comments.map((comment) => (
+              <div key={comment._id} className="comment-item">
+                <div className="comment-avatar">
+                  {getInitial(comment.user.name)}
+                </div>
+                <div className="comment-body">
+                  <div className="comment-head">
+                    <span className="comment-name">{comment.user.name}</span>
+                    {comment.date && (
+                      <span className="comment-time">
+                        {new Date(comment.date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </span>
+                    )}
+                  </div>
+                  <p className="comment-text">{comment.text}</p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="comment-empty">
+              No responses yet. Be the first to respond.
+            </p>
+          )}
+        </div>
+      </section>
     </div>
   );
 };
