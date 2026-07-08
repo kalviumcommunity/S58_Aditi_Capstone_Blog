@@ -6,6 +6,11 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./Writer.css";
 
+const cleanContent = (html) => {
+  if (!html) return "";
+  return html.replace(/<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "").trim();
+};
+
 const Write = () => {
   const [article, setArticle] = useState({
     title: "",
@@ -29,7 +34,12 @@ const Write = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${API_URL}/articles`, article, {
+      const payload = {
+        ...article,
+        content: cleanContent(article.content),
+      };
+
+      const response = await axios.post(`${API_URL}/articles`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -42,10 +52,16 @@ const Write = () => {
 
   return (
     <div className="writer-container">
-      <h2 className="writer-heading">Write a new story</h2>
-      {error && <p className="error-message">{error}</p>}
-
       <form onSubmit={handleSubmit} className="writer-form">
+        <div className="writer-topbar">
+          <span className="writer-label">Draft</span>
+          <button type="submit" className="writer-submit-btn">
+            Publish
+          </button>
+        </div>
+
+        {error && <p className="error-message">{error}</p>}
+
         <input
           type="text"
           name="title"
@@ -71,10 +87,6 @@ const Write = () => {
           placeholder="Tell your story..."
           className="writer-editor"
         />
-
-        <button type="submit" className="writer-submit-btn">
-          Publish
-        </button>
       </form>
     </div>
   );
