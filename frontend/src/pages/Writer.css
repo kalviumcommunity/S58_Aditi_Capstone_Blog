@@ -28,7 +28,7 @@
 }
 
 .writer-submit-btn {
-  background: #1a8917;
+  background: #5c1a2b;
   color: #fff;
   padding: 8px 22px;
   border: none;
@@ -40,7 +40,7 @@
 }
 
 .writer-submit-btn:hover {
-  background: #156d13;
+  background: #4a1522;
 }
 
 /* Title + description inputs */

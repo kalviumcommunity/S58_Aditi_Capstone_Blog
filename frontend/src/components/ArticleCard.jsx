@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
+import { getInitial, getAvatarColor } from "../utils/avatarColor";
 import "./ArticleCard.css";
-
-const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : "?");
 
 const getFirstImage = (html) => {
   if (!html) return null;
@@ -16,7 +15,12 @@ const ArticleCard = ({ article }) => {
   return (
     <div className="article-card">
       <div className="card-byline">
-        <div className="card-avatar">{getInitial(author?.name)}</div>
+        <div
+          className="card-avatar"
+          style={{ background: getAvatarColor(author?.name) }}
+        >
+          {getInitial(author?.name)}
+        </div>
         <span className="card-author">{author?.name || "Unknown Author"}</span>
         <span className="card-dot">·</span>
         <span className="card-date">

@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../config";
+import { getInitial, getAvatarColor } from "../utils/avatarColor";
 import "./Article.css";
-
-const getInitial = (name) => (name ? name.charAt(0).toUpperCase() : "?");
 
 const getReadTime = (html) => {
   if (!html) return "1 min read";
@@ -156,6 +155,7 @@ const Article = () => {
         <div className="article-byline">
           <div
             className="byline-avatar"
+            style={{ background: getAvatarColor(article.author.name) }}
             onClick={() => navigate(`/profile/${article.author._id}`)}
           >
             {getInitial(article.author.name)}
@@ -223,7 +223,10 @@ const Article = () => {
 
         {token && (
           <div className="comment-composer">
-            <div className="composer-avatar">
+            <div
+              className="composer-avatar"
+              style={{ background: getAvatarColor(article.author.name) }}
+            >
               {getInitial(article.author.name)}
             </div>
             <form className="composer-body" onSubmit={handleCommentSubmit}>
@@ -245,7 +248,10 @@ const Article = () => {
           {comments.length > 0 ? (
             comments.map((comment) => (
               <div key={comment._id} className="comment-item">
-                <div className="comment-avatar">
+                <div
+                  className="comment-avatar"
+                  style={{ background: getAvatarColor(comment.user.name) }}
+                >
                   {getInitial(comment.user.name)}
                 </div>
                 <div className="comment-body">
