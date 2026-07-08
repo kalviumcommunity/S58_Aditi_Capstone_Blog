@@ -42,6 +42,7 @@ const Signup = () => {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.user._id);
+      localStorage.setItem("userName", data.user.name || "");
 
       const to = location.state?.from?.pathname || "/";
       navigate(to, { replace: true });

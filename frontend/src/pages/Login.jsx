@@ -34,9 +34,10 @@ const Login = () => {
         headers: { "Content-Type": "application/json" },
       });
 
-      // store token + (optional) user id
+      // store token + user id + name
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.user?._id || "");
+      localStorage.setItem("userName", data.user?.name || "");
 
       // go back to where user tried to go, or home
       const to = location.state?.from?.pathname || "/";

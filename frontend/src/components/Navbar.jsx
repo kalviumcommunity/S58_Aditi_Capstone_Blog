@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { getInitial, getAvatarColor } from "../utils/avatarColor";
 import { useState, useEffect, useRef } from "react";
 import { isLoggedIn, logout } from "../utils/auth";
 import "./Navbar.css";
@@ -9,6 +10,7 @@ const Navbar = () => {
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileRef = useRef(null);
+  const userName = localStorage.getItem("userName") || "";
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -90,9 +92,10 @@ const Navbar = () => {
             <div className="profile-menu" ref={profileRef}>
               <div
                 className="profile-circle"
+                style={{ background: getAvatarColor(userName) }}
                 onClick={() => setShowProfileMenu((prev) => !prev)}
               >
-                A
+                {getInitial(userName)}
               </div>
               <div
                 className={`profile-dropdown ${showProfileMenu ? "open" : ""}`}
