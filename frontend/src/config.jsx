@@ -1,3 +1,1 @@
-export const API_URL = "https://medium-clone-8hte.onrender.com/api";
-
-// error : ignore.
+export const API_URL = "https://s58-aditi-capstone-blog.onrender.com/api";
