@@ -1,16 +1,10 @@
-.writer-container {
-  max-width: 720px;
-  margin: 40px auto;
-  padding: 20px;
-  background-color: #fff;
-  font-family: "sohne", "Helvetica Neue", Helvetica, Arial, sans-serif;
-}
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap");
 
-.writer-heading {
-  font-family: "gt-super", Georgia, serif;
-  font-size: 32px;
-  margin-bottom: 20px;
-  color: #242424;
+.writer-container {
+  max-width: 700px;
+  margin: 40px auto 96px;
+  padding: 0 24px;
+  font-family: "Inter", sans-serif;
 }
 
 .writer-form {
@@ -18,48 +12,99 @@
   flex-direction: column;
 }
 
-.writer-input {
-  font-size: 20px;
-  padding: 10px;
-  border: none;
-  border-bottom: 1px solid #e0e0e0;
-  margin-bottom: 20px;
-  outline: none;
+/* Top bar with Publish */
+.writer-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid #ededed;
 }
 
-.title-input {
-  font-weight: 600;
-  font-size: 28px;
-}
-
-.description-input {
-  font-size: 18px;
-  color: #555;
-}
-
-.writer-editor {
-  margin-bottom: 20px;
-  height: 300px;
-  background: #fff;
+.writer-label {
+  font-size: 14px;
+  color: #999;
 }
 
 .writer-submit-btn {
-  background-color: #000;
+  background: #1a8917;
   color: #fff;
-  padding: 12px 0;
+  padding: 8px 22px;
   border: none;
-  font-size: 16px;
-  border-radius: 4px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.15s ease;
 }
 
 .writer-submit-btn:hover {
-  background-color: #333;
+  background: #156d13;
+}
+
+/* Title + description inputs */
+.writer-input {
+  border: none;
+  outline: none;
+  padding: 0;
+  margin-bottom: 20px;
+  width: 100%;
+  font-family: "Fraunces", serif;
+  color: #242424;
+}
+
+.title-input {
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.title-input::placeholder {
+  color: #cfcfcf;
+}
+
+.description-input {
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #6b6b6b;
+  margin-bottom: 28px;
+}
+
+.description-input::placeholder {
+  color: #cfcfcf;
+}
+
+/* Quill editor */
+.writer-editor .ql-toolbar.ql-snow {
+  border: none;
+  border-bottom: 1px solid #ededed;
+  padding: 8px 0;
+}
+
+.writer-editor .ql-container.ql-snow {
+  border: none;
+  font-family: "Fraunces", serif;
+}
+
+.writer-editor .ql-editor {
+  min-height: 340px;
+  padding: 24px 0;
+  font-size: 1.2rem;
+  line-height: 1.75;
+  color: #242424;
+}
+
+.writer-editor .ql-editor.ql-blank::before {
+  font-style: normal;
+  color: #cfcfcf;
+  left: 0;
+  font-size: 1.2rem;
 }
 
 .error-message {
-  color: red;
-  margin-bottom: 10px;
+  color: #d32f2f;
+  margin-bottom: 16px;
   font-size: 14px;
 }
