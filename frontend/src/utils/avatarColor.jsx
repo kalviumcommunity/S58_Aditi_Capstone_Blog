@@ -1,7 +1,7 @@
 const AVATAR_COLORS = [
   "#2f6f8f", // teal blue
-  "#2e6b4f", // forest green
-  "#4d5f2e", // deep olive
+  "#2b2b30", // dark slate
+  "#7a4a34", // warm brown
   "#8b4a8f", // plum
   "#b0353a", // crimson
   "#4257b2", // indigo
