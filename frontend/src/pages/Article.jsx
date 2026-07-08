@@ -114,15 +114,24 @@ const Article = () => {
   };
 
   const handleLike = async () => {
+    const alreadyLiked = article.likes.includes(userId);
+
+    setArticle((prev) => ({
+      ...prev,
+      likes: alreadyLiked
+        ? prev.likes.filter((uid) => uid !== userId)
+        : [...prev.likes, userId],
+    }));
+
     try {
       await axios.post(
         `${API_URL}/articles/${id}/like`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      fetchArticle();
     } catch (err) {
       console.error("Failed to like article", err);
+      fetchArticle();
     }
   };
 

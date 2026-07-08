@@ -8,6 +8,7 @@ import "./Auth.css";
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,6 +28,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       // NOTE: API_URL already has '/api', so '/auth/login' is correct
@@ -49,6 +51,7 @@ const Login = () => {
           ? "Network error: API unreachable"
           : "Login failed");
       setError(msg);
+      setLoading(false);
     }
   };
 
@@ -104,8 +107,12 @@ const Login = () => {
                 required
               />
             </div>
-            <button type="submit" className="auth-btn auth-btn-primary">
-              Sign in
+            <button
+              type="submit"
+              className="auth-btn auth-btn-primary"
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
 

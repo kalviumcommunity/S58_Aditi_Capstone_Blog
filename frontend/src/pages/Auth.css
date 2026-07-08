@@ -212,6 +212,13 @@ body {
 .auth-btn:hover {
   transform: translateY(-1px);
 }
+
+.auth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .auth-btn-primary {
   background: var(--auth-ink);
   color: #fff;

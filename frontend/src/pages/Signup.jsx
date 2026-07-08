@@ -12,6 +12,7 @@ const Signup = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,6 +36,8 @@ const Signup = () => {
       return;
     }
 
+    setLoading(true);
+
     try {
       const { data } = await axios.post(`${API_URL}/auth/signup`, formData, {
         headers: { "Content-Type": "application/json" },
@@ -53,6 +56,7 @@ const Signup = () => {
           ? "Network error: API unreachable"
           : "Signup failed");
       setError(msg);
+      setLoading(false);
     }
   };
 
@@ -120,8 +124,12 @@ const Signup = () => {
                 required
               />
             </div>
-            <button type="submit" className="auth-btn auth-btn-primary">
-              Create account
+            <button
+              type="submit"
+              className="auth-btn auth-btn-primary"
+              disabled={loading}
+            >
+              {loading ? "Creating account..." : "Create account"}
             </button>
           </form>
 
