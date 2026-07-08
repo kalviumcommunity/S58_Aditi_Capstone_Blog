@@ -1,13 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { isLoggedIn, logout } from "../utils/auth";
-import { useState } from "react";
 import "./Navbar.css";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchInput, setShowSearchInput] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileRef = useRef(null);
 
   useEffect(() => {
