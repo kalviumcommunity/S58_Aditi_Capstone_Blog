@@ -67,6 +67,8 @@ const Article = () => {
   const [article, setArticle] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyText, setReplyText] = useState("");
 
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
@@ -101,6 +103,23 @@ const Article = () => {
     }
   };
 
+  const handleReplySubmit = async (e, commentId) => {
+    e.preventDefault();
+    if (!replyText.trim()) return;
+    try {
+      await axios.post(
+        `${API_URL}/articles/${id}/comment/${commentId}/reply`,
+        { text: replyText },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      setReplyText("");
+      setReplyingTo(null);
+      fetchArticle();
+    } catch (err) {
+      console.error("Failed to add reply", err);
+    }
+  };
+
   const handleDelete = async () => {
     try {
       await axios.delete(`${API_URL}/articles/${id}`, {
@@ -114,14 +133,12 @@ const Article = () => {
 
   const handleLike = async () => {
     const alreadyLiked = article.likes.includes(userId);
-
     setArticle((prev) => ({
       ...prev,
       likes: alreadyLiked
         ? prev.likes.filter((uid) => uid !== userId)
         : [...prev.likes, userId],
     }));
-
     try {
       await axios.post(
         `${API_URL}/articles/${id}/like`,
@@ -136,14 +153,12 @@ const Article = () => {
 
   const handleBookmark = async () => {
     const alreadyBookmarked = article.bookmarks.includes(userId);
-
     setArticle((prev) => ({
       ...prev,
       bookmarks: alreadyBookmarked
         ? prev.bookmarks.filter((uid) => uid !== userId)
         : [...prev.bookmarks, userId],
     }));
-
     try {
       await axios.post(
         `${API_URL}/articles/${id}/bookmark`,
@@ -288,6 +303,83 @@ const Article = () => {
                     )}
                   </div>
                   <p className="comment-text">{comment.text}</p>
+
+                  {token && (
+                    <button
+                      className="reply-btn"
+                      onClick={() =>
+                        setReplyingTo(
+                          replyingTo === comment._id ? null : comment._id,
+                        )
+                      }
+                    >
+                      Reply
+                    </button>
+                  )}
+
+                  {replyingTo === comment._id && (
+                    <form
+                      className="reply-form"
+                      onSubmit={(e) => handleReplySubmit(e, comment._id)}
+                    >
+                      <textarea
+                        value={replyText}
+                        onChange={(e) => setReplyText(e.target.value)}
+                        placeholder="Write a reply..."
+                        rows="2"
+                        required
+                      />
+                      <div className="reply-actions">
+                        <button
+                          type="button"
+                          className="reply-cancel"
+                          onClick={() => {
+                            setReplyingTo(null);
+                            setReplyText("");
+                          }}
+                        >
+                          Cancel
+                        </button>
+                        <button type="submit">Reply</button>
+                      </div>
+                    </form>
+                  )}
+
+                  {comment.replies && comment.replies.length > 0 && (
+                    <div className="reply-list">
+                      {comment.replies.map((reply) => (
+                        <div key={reply._id} className="reply-item">
+                          <div
+                            className="reply-avatar"
+                            style={{
+                              background: getAvatarColor(reply.user.name),
+                            }}
+                          >
+                            {getInitial(reply.user.name)}
+                          </div>
+                          <div className="reply-body">
+                            <div className="comment-head">
+                              <span className="comment-name">
+                                {reply.user.name}
+                              </span>
+                              {reply.date && (
+                                <span className="comment-time">
+                                  {new Date(reply.date).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      month: "short",
+                                      day: "numeric",
+                                    },
+                                  )}
+                                </span>
+                              )}
+                            </div>
+                            <p className="comment-text">{reply.text}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))

@@ -157,13 +157,37 @@ router.post("/:id/comment", authenticateToken, async (req, res) => {
   }
 });
 
+// Reply to a specific comment
+router.post(
+  "/:id/comment/:commentId/reply",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const { text } = req.body;
+      const article = await Article.findById(req.params.id);
+      if (!article)
+        return res.status(404).json({ message: "Article not found" });
+
+      const comment = article.comments.id(req.params.commentId);
+      if (!comment)
+        return res.status(404).json({ message: "Comment not found" });
+
+      comment.replies.push({ user: req.user.id, text });
+      await article.save();
+
+      res.json(article.comments);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+);
+
 // Get all comments for an article
 router.get("/:id/comments", async (req, res) => {
   try {
-    const article = await Article.findById(req.params.id).populate(
-      "comments.user",
-      "name",
-    );
+    const article = await Article.findById(req.params.id)
+      .populate("comments.user", "name")
+      .populate("comments.replies.user", "name");
     if (!article) return res.status(404).json({ message: "Article not found" });
 
     res.json(article.comments);
