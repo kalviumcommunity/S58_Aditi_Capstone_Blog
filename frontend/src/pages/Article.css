@@ -436,3 +436,24 @@
 .reply-body {
   flex: 1;
 }
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.delete-comment-btn {
+  background: none;
+  border: none;
+  color: #b42318;
+  font-size: 13px;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.delete-comment-btn:hover {
+  text-decoration: underline;
+}

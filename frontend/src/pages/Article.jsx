@@ -72,6 +72,7 @@ const Article = () => {
 
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
+  const userName = localStorage.getItem("userName") || "";
 
   const fetchArticle = async () => {
     try {
@@ -117,6 +118,31 @@ const Article = () => {
       fetchArticle();
     } catch (err) {
       console.error("Failed to add reply", err);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm("Delete this comment?")) return;
+    try {
+      await axios.delete(`${API_URL}/articles/${id}/comment/${commentId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchArticle();
+    } catch (err) {
+      console.error("Failed to delete comment", err);
+    }
+  };
+
+  const handleDeleteReply = async (commentId, replyId) => {
+    if (!window.confirm("Delete this reply?")) return;
+    try {
+      await axios.delete(
+        `${API_URL}/articles/${id}/comment/${commentId}/reply/${replyId}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      fetchArticle();
+    } catch (err) {
+      console.error("Failed to delete reply", err);
     }
   };
 
@@ -260,9 +286,9 @@ const Article = () => {
           <div className="comment-composer">
             <div
               className="composer-avatar"
-              style={{ background: getAvatarColor(article.author.name) }}
+              style={{ background: getAvatarColor(userName) }}
             >
-              {getInitial(article.author.name)}
+              {getInitial(userName)}
             </div>
             <form className="composer-body" onSubmit={handleCommentSubmit}>
               <textarea
@@ -304,18 +330,30 @@ const Article = () => {
                   </div>
                   <p className="comment-text">{comment.text}</p>
 
-                  {token && (
-                    <button
-                      className="reply-btn"
-                      onClick={() =>
-                        setReplyingTo(
-                          replyingTo === comment._id ? null : comment._id,
-                        )
-                      }
-                    >
-                      Reply
-                    </button>
-                  )}
+                  <div className="comment-actions">
+                    {token && (
+                      <button
+                        className="reply-btn"
+                        onClick={() =>
+                          setReplyingTo(
+                            replyingTo === comment._id ? null : comment._id,
+                          )
+                        }
+                      >
+                        Reply
+                      </button>
+                    )}
+                    {token &&
+                      (comment.user._id === userId ||
+                        article.author._id === userId) && (
+                        <button
+                          className="delete-comment-btn"
+                          onClick={() => handleDeleteComment(comment._id)}
+                        >
+                          Delete
+                        </button>
+                      )}
+                  </div>
 
                   {replyingTo === comment._id && (
                     <form
@@ -375,6 +413,18 @@ const Article = () => {
                               )}
                             </div>
                             <p className="comment-text">{reply.text}</p>
+                            {token &&
+                              (reply.user._id === userId ||
+                                article.author._id === userId) && (
+                                <button
+                                  className="delete-comment-btn"
+                                  onClick={() =>
+                                    handleDeleteReply(comment._id, reply._id)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              )}
                           </div>
                         </div>
                       ))}

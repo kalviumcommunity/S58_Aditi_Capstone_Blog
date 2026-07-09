@@ -47,7 +47,7 @@ const Navbar = () => {
         <form onSubmit={handleSearch} className="simple-search-form">
           <input
             type="text"
-            placeholder="Search Medium"
+            placeholder="Search Familiar..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

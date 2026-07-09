@@ -182,6 +182,69 @@ router.post(
   },
 );
 
+// Delete a comment (comment author or article owner)
+router.delete(
+  "/:id/comment/:commentId",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const article = await Article.findById(req.params.id);
+      if (!article)
+        return res.status(404).json({ message: "Article not found" });
+
+      const comment = article.comments.id(req.params.commentId);
+      if (!comment)
+        return res.status(404).json({ message: "Comment not found" });
+
+      const isCommentAuthor = comment.user.toString() === req.user.id;
+      const isArticleOwner = article.author.toString() === req.user.id;
+      if (!isCommentAuthor && !isArticleOwner) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      article.comments.pull({ _id: req.params.commentId });
+      await article.save();
+
+      res.json(article.comments);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+);
+
+// Delete a reply (reply author or article owner)
+router.delete(
+  "/:id/comment/:commentId/reply/:replyId",
+  authenticateToken,
+  async (req, res) => {
+    try {
+      const article = await Article.findById(req.params.id);
+      if (!article)
+        return res.status(404).json({ message: "Article not found" });
+
+      const comment = article.comments.id(req.params.commentId);
+      if (!comment)
+        return res.status(404).json({ message: "Comment not found" });
+
+      const reply = comment.replies.id(req.params.replyId);
+      if (!reply) return res.status(404).json({ message: "Reply not found" });
+
+      const isReplyAuthor = reply.user.toString() === req.user.id;
+      const isArticleOwner = article.author.toString() === req.user.id;
+      if (!isReplyAuthor && !isArticleOwner) {
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+
+      comment.replies.pull({ _id: req.params.replyId });
+      await article.save();
+
+      res.json(article.comments);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  },
+);
+
 // Get all comments for an article
 router.get("/:id/comments", async (req, res) => {
   try {
