@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../config";
+import { getInitial, getAvatarColor } from "../utils/avatarColor";
 import "./Profile.css";
 
 const Profile = () => {
@@ -16,9 +17,11 @@ const Profile = () => {
     axios.get(`${API_URL}/users/${id}`).then((res) => {
       setUser(res.data.user);
       setArticles(
-        res.data.articles.sort((a, b) => new Date(b.date) - new Date(a.date))
+        res.data.articles.sort((a, b) => new Date(b.date) - new Date(a.date)),
       );
-      setIsFollowing(res.data.user.followers.includes(currentUserId));
+      setIsFollowing(
+        res.data.user.followers.some((f) => f._id === currentUserId),
+      );
     });
   }, [id, currentUserId]);
 
@@ -28,7 +31,7 @@ const Profile = () => {
       await axios.post(
         `${API_URL}/users/${id}/${endpoint}`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setIsFollowing(!isFollowing);
     } catch (err) {
@@ -36,12 +39,18 @@ const Profile = () => {
     }
   };
 
-  if (!user) return <p>Loading...</p>;
+  if (!user) return <p className="profile-loading">Loading...</p>;
 
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <h1>{user.name}</h1>
+        <div
+          className="profile-avatar"
+          style={{ background: getAvatarColor(user.name) }}
+        >
+          {getInitial(user.name)}
+        </div>
+        <h1 className="profile-name">{user.name}</h1>
         <p className="profile-email">{user.email}</p>
         {user.bio ? (
           <p className="profile-bio">{user.bio}</p>
@@ -54,51 +63,41 @@ const Profile = () => {
             className={`follow-btn ${isFollowing ? "unfollow" : "follow"}`}
             onClick={handleFollowToggle}
           >
-            {isFollowing ? "Unfollow" : "Follow"}
+            {isFollowing ? "Following" : "Follow"}
           </button>
         )}
       </div>
 
-      <div className="profile-social">
-        <div>
-          <strong>Followers:</strong>{" "}
-          {user.followers.length ? (
-            user.followers.map((f) => (
-              <Link key={f._id} to={`/profile/${f._id}`}>
-                {f.name}
-              </Link>
-            ))
-          ) : (
-            <span>None</span>
-          )}
+      <div className="profile-stats">
+        <div className="stat">
+          <span className="stat-num">{user.followers.length}</span>
+          <span className="stat-label">Followers</span>
         </div>
-
-        <div>
-          <strong>Following:</strong>{" "}
-          {user.following.length ? (
-            user.following.map((f) => (
-              <Link key={f._id} to={`/profile/${f._id}`}>
-                {f.name}
-              </Link>
-            ))
-          ) : (
-            <span>None</span>
-          )}
+        <div className="stat">
+          <span className="stat-num">{user.following.length}</span>
+          <span className="stat-label">Following</span>
+        </div>
+        <div className="stat">
+          <span className="stat-num">{articles.length}</span>
+          <span className="stat-label">Stories</span>
         </div>
       </div>
 
-      <h3 className="profile-articles-heading">Articles by {user.name}</h3>
+      <h3 className="profile-articles-heading">Stories by {user.name}</h3>
 
       <div className="profile-articles">
         {articles.length === 0 ? (
-          <p>No articles yet.</p>
+          <p className="profile-empty">No stories yet.</p>
         ) : (
           articles.map((article) => (
-            <div className="article-card" key={article._id}>
-              <Link to={`/article/${article._id}`}>
+            <div className="profile-article-card" key={article._id}>
+              <Link
+                to={`/article/${article._id}`}
+                className="profile-article-link"
+              >
                 <h4>{article.title}</h4>
+                {article.description && <p>{article.description}</p>}
               </Link>
-              <p>{article.description}</p>
             </div>
           ))
         )}
