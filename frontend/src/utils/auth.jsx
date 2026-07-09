@@ -9,8 +9,9 @@ export const getToken = () => localStorage.getItem("token");
  */
 export const logout = () => {
   localStorage.removeItem("token");
-  localStorage.removeItem("userId"); // Optional if you store user ID
-  window.location.href = "/login"; // You can replace this with navigate() if using React Router in context
+  localStorage.removeItem("userId");
+  localStorage.removeItem("userName");
+  window.location.href = "/login";
 };
 
 /**
