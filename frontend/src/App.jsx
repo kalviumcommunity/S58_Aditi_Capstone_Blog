@@ -15,6 +15,7 @@ import GoogleSuccess from "./pages/GoogleSuccess";
 import PrivateRoute from "./utils/PrivateRoute";
 import SearchResults from "./pages/SearchResults";
 import EditArticle from "./pages/EditArticle";
+import Saved from "./pages/Saved";
 
 function Layout() {
   const location = useLocation();
@@ -48,6 +49,7 @@ function Layout() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/google-success" element={<GoogleSuccess />} />
+        <Route path="/saved" element={<Saved />} />
       </Routes>
     </>
   );

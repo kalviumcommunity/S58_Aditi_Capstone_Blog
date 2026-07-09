@@ -7,7 +7,6 @@ import "./Navbar.css";
 const Navbar = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [showSearchInput, setShowSearchInput] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileRef = useRef(null);
   const userName = localStorage.getItem("userName") || "";
@@ -32,12 +31,7 @@ const Navbar = () => {
     if (searchQuery.trim()) {
       navigate(`/search?q=${searchQuery}`);
       setSearchQuery("");
-      setShowSearchInput(false);
     }
-  };
-
-  const toggleSearchInput = () => {
-    setShowSearchInput(!showSearchInput);
   };
 
   return (
@@ -102,6 +96,9 @@ const Navbar = () => {
               >
                 <Link to="/profile" className="dropdown-item">
                   Profile
+                </Link>
+                <Link to="/saved" className="dropdown-item">
+                  Saved
                 </Link>
                 <Link to="/settings" className="dropdown-item">
                   Settings

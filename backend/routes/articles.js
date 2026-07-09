@@ -21,6 +21,19 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Get all articles the current user has bookmarked
+router.get("/user/bookmarks", authenticateToken, async (req, res) => {
+  try {
+    const articles = await Article.find({ bookmarks: req.user.id })
+      .populate("author", "name")
+      .sort({ date: -1 });
+
+    res.json(articles);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // populating
 router.get("/:id", async (req, res) => {
   try {
@@ -122,19 +135,6 @@ router.post("/:id/bookmark", authenticateToken, async (req, res) => {
 
     await article.save();
     res.json({ bookmarks: article.bookmarks, count: article.bookmarks.length });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
-// Get all articles the current user has bookmarked
-router.get("/user/bookmarks", authenticateToken, async (req, res) => {
-  try {
-    const articles = await Article.find({ bookmarks: req.user.id })
-      .populate("author", "name")
-      .sort({ date: -1 });
-
-    res.json(articles);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
