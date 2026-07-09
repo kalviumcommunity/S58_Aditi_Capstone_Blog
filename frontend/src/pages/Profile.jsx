@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL } from "../config";
 import { getInitial, getAvatarColor } from "../utils/avatarColor";
@@ -7,6 +7,7 @@ import "./Profile.css";
 
 const Profile = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isFollowing, setIsFollowing] = useState(false);
   const [articles, setArticles] = useState([]);
@@ -64,6 +65,15 @@ const Profile = () => {
             onClick={handleFollowToggle}
           >
             {isFollowing ? "Following" : "Follow"}
+          </button>
+        )}
+
+        {token && currentUserId === id && (
+          <button
+            className="edit-profile-btn"
+            onClick={() => navigate("/edit-profile")}
+          >
+            Edit profile
           </button>
         )}
       </div>

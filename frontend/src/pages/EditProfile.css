@@ -1,0 +1,121 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&display=swap");
+
+.settings-loading {
+  text-align: center;
+  margin-top: 80px;
+  color: #999;
+  font-family: "Inter", sans-serif;
+}
+
+.settings-container {
+  max-width: 560px;
+  margin: 56px auto 96px;
+  padding: 0 24px;
+  font-family: "Inter", sans-serif;
+  color: #242424;
+}
+
+.settings-title {
+  font-family: "Fraunces", serif;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+}
+
+.settings-sub {
+  color: #6b6b6b;
+  font-size: 14px;
+  margin: 0 0 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #ededed;
+}
+
+.settings-field {
+  margin-bottom: 24px;
+}
+
+.settings-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #6b6b6b;
+  margin-bottom: 8px;
+}
+
+.settings-field input,
+.settings-field textarea {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 11px 13px;
+  font-size: 15px;
+  font-family: "Inter", sans-serif;
+  color: #242424;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.settings-field textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.settings-field input:focus,
+.settings-field textarea:focus {
+  border-color: #5c1a2b;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.settings-cancel {
+  background: #fff;
+  color: #242424;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  padding: 9px 20px;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.settings-cancel:hover {
+  background: #f5f5f5;
+}
+
+.settings-save {
+  background: #5c1a2b;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 9px 22px;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.settings-save:hover {
+  background: #4a1522;
+}
+
+.settings-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.settings-message {
+  text-align: right;
+  font-size: 13px;
+  color: #6b6b6b;
+  margin-top: 12px;
+}
