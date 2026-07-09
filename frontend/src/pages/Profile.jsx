@@ -52,7 +52,7 @@ const Profile = () => {
           {getInitial(user.name)}
         </div>
         <h1 className="profile-name">{user.name}</h1>
-        <p className="profile-email">{user.email}</p>
+        {currentUserId === id && <p className="profile-email">{user.email}</p>}
         {user.bio ? (
           <p className="profile-bio">{user.bio}</p>
         ) : (
