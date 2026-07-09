@@ -192,6 +192,14 @@
   fill: none;
 }
 
+.engage-icon.bookmarked-active {
+  color: #5c1a2b;
+}
+
+.engage-icon.bookmarked-active svg {
+  fill: #5c1a2b;
+}
+
 .engage-icon.liked-active {
   color: #c0392b;
 }

@@ -103,6 +103,43 @@ router.post("/:id/like", authenticateToken, async (req, res) => {
   }
 });
 
+// Bookmark or Un-bookmark an Article
+router.post("/:id/bookmark", authenticateToken, async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id);
+    if (!article) return res.status(404).json({ message: "Article not found" });
+
+    const userId = req.user.id;
+    const hasBookmarked = article.bookmarks.includes(userId);
+
+    if (hasBookmarked) {
+      article.bookmarks = article.bookmarks.filter(
+        (id) => id.toString() !== userId,
+      );
+    } else {
+      article.bookmarks.push(userId);
+    }
+
+    await article.save();
+    res.json({ bookmarks: article.bookmarks, count: article.bookmarks.length });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get all articles the current user has bookmarked
+router.get("/user/bookmarks", authenticateToken, async (req, res) => {
+  try {
+    const articles = await Article.find({ bookmarks: req.user.id })
+      .populate("author", "name")
+      .sort({ date: -1 });
+
+    res.json(articles);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Add a comment to an article
 router.post("/:id/comment", authenticateToken, async (req, res) => {
   try {

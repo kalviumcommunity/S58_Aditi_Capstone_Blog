@@ -52,7 +52,6 @@ const BookmarkIcon = () => (
     width="19"
     height="19"
     viewBox="0 0 24 24"
-    fill="none"
     stroke="currentColor"
     strokeWidth="1.8"
     strokeLinecap="round"
@@ -136,15 +135,24 @@ const Article = () => {
   };
 
   const handleBookmark = async () => {
+    const alreadyBookmarked = article.bookmarks.includes(userId);
+
+    setArticle((prev) => ({
+      ...prev,
+      bookmarks: alreadyBookmarked
+        ? prev.bookmarks.filter((uid) => uid !== userId)
+        : [...prev.bookmarks, userId],
+    }));
+
     try {
       await axios.post(
         `${API_URL}/articles/${id}/bookmark`,
         {},
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      fetchArticle();
     } catch (err) {
       console.error("Failed to bookmark article", err);
+      fetchArticle();
     }
   };
 
@@ -221,7 +229,9 @@ const Article = () => {
           onClick={handleBookmark}
           aria-label="Bookmark"
         >
-          <span className="engage-icon">
+          <span
+            className={`engage-icon ${article.bookmarks.includes(userId) ? "bookmarked-active" : ""}`}
+          >
             <BookmarkIcon />
           </span>
           {article.bookmarks.length}
