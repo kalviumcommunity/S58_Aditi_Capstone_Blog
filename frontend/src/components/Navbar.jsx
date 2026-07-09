@@ -10,6 +10,7 @@ const Navbar = () => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileRef = useRef(null);
   const userName = localStorage.getItem("userName") || "";
+  const userId = localStorage.getItem("userId") || "";
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -94,7 +95,7 @@ const Navbar = () => {
               <div
                 className={`profile-dropdown ${showProfileMenu ? "open" : ""}`}
               >
-                <Link to="/profile" className="dropdown-item">
+                <Link to={`/profile/${userId}`} className="dropdown-item">
                   Profile
                 </Link>
                 <Link to="/saved" className="dropdown-item">
