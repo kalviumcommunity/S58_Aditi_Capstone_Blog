@@ -69,6 +69,7 @@ const Article = () => {
   const [commentText, setCommentText] = useState("");
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("userId");
@@ -121,28 +122,25 @@ const Article = () => {
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
-    if (!window.confirm("Delete this comment?")) return;
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      await axios.delete(`${API_URL}/articles/${id}/comment/${commentId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      if (deleteTarget.type === "comment") {
+        await axios.delete(
+          `${API_URL}/articles/${id}/comment/${deleteTarget.commentId}`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+      } else {
+        await axios.delete(
+          `${API_URL}/articles/${id}/comment/${deleteTarget.commentId}/reply/${deleteTarget.replyId}`,
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+      }
+      setDeleteTarget(null);
       fetchArticle();
     } catch (err) {
-      console.error("Failed to delete comment", err);
-    }
-  };
-
-  const handleDeleteReply = async (commentId, replyId) => {
-    if (!window.confirm("Delete this reply?")) return;
-    try {
-      await axios.delete(
-        `${API_URL}/articles/${id}/comment/${commentId}/reply/${replyId}`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      fetchArticle();
-    } catch (err) {
-      console.error("Failed to delete reply", err);
+      console.error("Failed to delete", err);
+      setDeleteTarget(null);
     }
   };
 
@@ -348,7 +346,12 @@ const Article = () => {
                         article.author._id === userId) && (
                         <button
                           className="delete-comment-btn"
-                          onClick={() => handleDeleteComment(comment._id)}
+                          onClick={() =>
+                            setDeleteTarget({
+                              type: "comment",
+                              commentId: comment._id,
+                            })
+                          }
                         >
                           Delete
                         </button>
@@ -419,7 +422,11 @@ const Article = () => {
                                 <button
                                   className="delete-comment-btn"
                                   onClick={() =>
-                                    handleDeleteReply(comment._id, reply._id)
+                                    setDeleteTarget({
+                                      type: "reply",
+                                      commentId: comment._id,
+                                      replyId: reply._id,
+                                    })
                                   }
                                 >
                                   Delete
@@ -440,6 +447,25 @@ const Article = () => {
           )}
         </div>
       </section>
+      {deleteTarget && (
+        <div className="modal-overlay" onClick={() => setDeleteTarget(null)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <h4 className="modal-title">Delete this {deleteTarget.type}?</h4>
+            <p className="modal-text">This can&apos;t be undone.</p>
+            <div className="modal-actions">
+              <button
+                className="modal-cancel"
+                onClick={() => setDeleteTarget(null)}
+              >
+                Cancel
+              </button>
+              <button className="modal-confirm" onClick={confirmDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
