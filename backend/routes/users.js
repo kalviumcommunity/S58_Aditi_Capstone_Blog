@@ -21,6 +21,29 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// ✅ Update own profile (name + bio)
+router.put("/:id", authenticateToken, async (req, res) => {
+  try {
+    // only let a user edit their own profile
+    if (req.params.id !== req.user.id) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    const { name, bio } = req.body;
+    const updated = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, bio },
+      { new: true, runValidators: true },
+    ).select("name email bio");
+
+    if (!updated) return res.status(404).json({ message: "User not found" });
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.post("/:id/follow", authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -64,10 +87,10 @@ router.post("/:id/unfollow", authenticateToken, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
 
     currentUser.following = currentUser.following.filter(
-      (uid) => uid.toString() !== id
+      (uid) => uid.toString() !== id,
     );
     userToUnfollow.followers = userToUnfollow.followers.filter(
-      (uid) => uid.toString() !== req.user.id
+      (uid) => uid.toString() !== req.user.id,
     );
 
     await currentUser.save();
