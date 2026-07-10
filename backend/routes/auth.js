@@ -29,15 +29,15 @@ router.post("/signup", async (req, res) => {
     });
     await newUser.save();
 
-    try {
-      await sendVerificationEmail(email, verificationToken);
-    } catch (mailErr) {
-      console.error("Failed to send verification email:", mailErr);
-    }
-
+    // respond immediately so the user isn't left waiting on the email
     res.status(201).json({
       message:
         "Account created. Check your email to verify your account before logging in.",
+    });
+
+    // send the email in the background (don't block the response)
+    sendVerificationEmail(email, verificationToken).catch((mailErr) => {
+      console.error("Failed to send verification email:", mailErr);
     });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
