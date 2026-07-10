@@ -3,6 +3,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const User = require("../models/User");
+const crypto = require("crypto");
+const { sendVerificationEmail } = require("../utils/sendEmail");
 
 const router = express.Router();
 require("../config/passport");
@@ -13,17 +15,30 @@ router.post("/signup", async (req, res) => {
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser)
-      return res.status(400).json({ message: "User already exits" });
+      return res.status(400).json({ message: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const newUser = new User({ name, email, password: hashedPassword });
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      verificationToken,
+      isVerified: false,
+    });
     await newUser.save();
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    try {
+      await sendVerificationEmail(email, verificationToken);
+    } catch (mailErr) {
+      console.error("Failed to send verification email:", mailErr);
+    }
 
-    res.status(201).json({ user: newUser, token });
+    res.status(201).json({
+      message:
+        "Account created. Check your email to verify your account before logging in.",
+    });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -34,11 +49,18 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "User does not exits" });
+    if (!user) return res.status(400).json({ message: "User does not exist" });
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if (!isPasswordCorrect)
       return res.status(400).json({ message: "Invalid credentials" });
+
+    if (!user.isVerified) {
+      return res.status(403).json({
+        message:
+          "Please verify your email before logging in. Check your inbox.",
+      });
+    }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
@@ -47,6 +69,27 @@ router.post("/login", async (req, res) => {
     res.status(200).json({ user, token });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+// Verify email
+router.get("/verify/:token", async (req, res) => {
+  try {
+    const user = await User.findOne({ verificationToken: req.params.token });
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired verification link" });
+    }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
+
+    res.json({ message: "Email verified. You can now log in." });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 });
 

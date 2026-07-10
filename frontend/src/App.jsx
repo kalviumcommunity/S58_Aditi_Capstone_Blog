@@ -18,6 +18,7 @@ import EditArticle from "./pages/EditArticle";
 import Saved from "./pages/Saved";
 import EditProfile from "./pages/EditProfile";
 import Settings from "./pages/Settings";
+import VerifyEmail from "./pages/VerifyEmail";
 
 function Layout() {
   const location = useLocation();
@@ -54,6 +55,7 @@ function Layout() {
         <Route path="/saved" element={<Saved />} />
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/verify/:token" element={<VerifyEmail />} />
       </Routes>
     </>
   );

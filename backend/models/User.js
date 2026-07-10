@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String },
   googleId: { type: String },
   bio: { type: String },
+  isVerified: { type: Boolean, default: false },
+  verificationToken: { type: String },
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   date: { type: Date, default: Date.now },

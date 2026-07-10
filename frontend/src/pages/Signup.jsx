@@ -2,7 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { API_URL } from "../config";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./Auth.css";
 
 const Signup = () => {
@@ -13,8 +13,7 @@ const Signup = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const [submitted, setSubmitted] = useState(false);
 
   // Same Google flow as Login. Works for new users too.
   const GOOGLE_URL = `${API_URL}/auth/google`;
@@ -30,7 +29,6 @@ const Signup = () => {
     e.preventDefault();
     setError("");
 
-    // basic client-side guard (optional; backend still enforces)
     if (formData.password.length < 6) {
       setError("Password must be at least 6 characters");
       return;
@@ -39,16 +37,11 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      const { data } = await axios.post(`${API_URL}/auth/signup`, formData, {
+      await axios.post(`${API_URL}/auth/signup`, formData, {
         headers: { "Content-Type": "application/json" },
       });
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.user._id);
-      localStorage.setItem("userName", data.user.name || "");
-
-      const to = location.state?.from?.pathname || "/";
-      navigate(to, { replace: true });
+      setSubmitted(true);
     } catch (err) {
       const msg =
         err.response?.data?.message ||
@@ -60,6 +53,42 @@ const Signup = () => {
     }
   };
 
+  if (submitted) {
+    return (
+      <div className="auth-shell">
+        <aside className="auth-left">
+          <div className="auth-wordmark">Familiar</div>
+          <p className="auth-statement">
+            Where <em>ideas</em> find the people who need them.
+          </p>
+          <p className="auth-footnote">
+            A quiet place to read, write, and think out loud.
+          </p>
+        </aside>
+        <main className="auth-right">
+          <div className="auth-card">
+            <h1 className="auth-title">Check your inbox</h1>
+            <p className="auth-sub">
+              We sent a verification link to <strong>{formData.email}</strong>.
+              Click it to activate your account, then log in. If you don&apos;t
+              see it, check your spam folder.
+            </p>
+            <Link
+              to="/login"
+              className="auth-btn auth-btn-primary"
+              style={{
+                display: "block",
+                textAlign: "center",
+                textDecoration: "none",
+              }}
+            >
+              Go to login
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
+  }
   return (
     <div className="auth-shell">
       <aside className="auth-left">
@@ -165,5 +194,4 @@ const Signup = () => {
     </div>
   );
 };
-
 export default Signup;
