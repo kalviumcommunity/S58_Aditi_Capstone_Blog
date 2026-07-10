@@ -1,21 +1,12 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  family: 4, // force IPv4 — Render's IPv6 can't reach Gmail SMTP
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendVerificationEmail = async (to, token) => {
   const verifyUrl = `${process.env.CLIENT_URL}/verify/${token}`;
 
-  const mailOptions = {
-    from: `"Familiar" <${process.env.EMAIL_USER}>`,
+  await resend.emails.send({
+    from: "Familiar <onboarding@resend.dev>",
     to,
     subject: "Verify your email for Familiar",
     html: `
@@ -35,9 +26,7 @@ const sendVerificationEmail = async (to, token) => {
         </p>
       </div>
     `,
-  };
-
-  await transporter.sendMail(mailOptions);
+  });
 };
 
 module.exports = { sendVerificationEmail };
