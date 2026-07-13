@@ -6,7 +6,7 @@ const sendVerificationEmail = async (to, token) => {
   const verifyUrl = `${process.env.CLIENT_URL}/verify/${token}`;
 
   await resend.emails.send({
-    from: "Familiar <onboarding@resend.dev>",
+    from: "Familiar <noreply@aditivashishtha.com>",
     to,
     subject: "Verify your email for Familiar",
     html: `
