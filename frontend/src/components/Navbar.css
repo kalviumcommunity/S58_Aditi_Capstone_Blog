@@ -231,11 +231,25 @@ a {
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .navbar {
-    padding: 0 16px;
+    padding: 0 12px;
   }
 
   .navbar-left {
-    gap: 16px;
+    gap: 10px;
+  }
+
+  .navbar-logo {
+    font-size: 1.25rem;
+  }
+
+  /* shrink the search bar so the avatar fits */
+  .simple-search-form {
+    margin-left: 8px;
+    padding: 5px 10px;
+  }
+
+  .simple-search-form input {
+    width: 80px;
   }
 
   .write-link span {
@@ -243,6 +257,11 @@ a {
   }
 
   .navbar-right {
-    gap: 12px;
+    gap: 8px;
+  }
+
+  .profile-dropdown {
+    right: 8px;
+    min-width: 160px;
   }
 }
