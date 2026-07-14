@@ -19,10 +19,14 @@ import Saved from "./pages/Saved";
 import EditProfile from "./pages/EditProfile";
 import Settings from "./pages/Settings";
 import VerifyEmail from "./pages/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function Layout() {
   const location = useLocation();
-  const hideNavbar = ["/login", "/signup"].includes(location.pathname);
+  const hideNavbar =
+    ["/login", "/signup", "/forgot-password"].includes(location.pathname) ||
+    location.pathname.startsWith("/reset-password");
 
   return (
     <>
@@ -56,6 +60,8 @@ function Layout() {
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/verify/:token" element={<VerifyEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
     </>
   );

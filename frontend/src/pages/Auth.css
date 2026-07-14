@@ -284,3 +284,24 @@ body {
 .auth-foot a:hover {
   border-bottom-color: var(--auth-ink);
 }
+
+.auth-success {
+  color: #2f6f43;
+  font-size: 14px;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.auth-forgot {
+  text-align: right;
+  margin: -6px 0 16px;
+}
+
+.auth-forgot a {
+  font-size: 13px;
+  color: #5c1a2b;
+}
+
+.auth-forgot a:hover {
+  text-decoration: underline;
+}
