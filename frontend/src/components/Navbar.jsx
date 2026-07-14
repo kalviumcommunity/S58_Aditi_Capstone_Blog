@@ -63,7 +63,13 @@ const Navbar = () => {
   };
 
   useEffect(() => {
-    if (isLoggedIn()) fetchNotifications();
+    if (!isLoggedIn()) return;
+
+    fetchNotifications();
+
+    // poll for new notifications every 30s
+    const interval = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
