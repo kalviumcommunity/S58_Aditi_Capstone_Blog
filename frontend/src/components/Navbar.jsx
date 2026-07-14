@@ -2,20 +2,78 @@ import { Link, useNavigate } from "react-router-dom";
 import { getInitial, getAvatarColor } from "../utils/avatarColor";
 import { useState, useEffect, useRef } from "react";
 import { isLoggedIn, logout } from "../utils/auth";
+import axios from "axios";
+import { API_URL } from "../config";
 import "./Navbar.css";
+
+const timeAgo = (date) => {
+  const s = Math.floor((Date.now() - new Date(date)) / 1000);
+  if (s < 60) return "just now";
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  const d = Math.floor(h / 24);
+  return `${d}d ago`;
+};
+
+const notifLabel = (n) => {
+  const name = n.sender?.name || "Someone";
+  if (n.type === "like") return `${name} liked your article`;
+  if (n.type === "comment") return `${name} commented on your article`;
+  if (n.type === "reply") return `${name} replied to your comment`;
+  return "";
+};
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showNotif, setShowNotif] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const profileRef = useRef(null);
+  const notifRef = useRef(null);
   const userName = localStorage.getItem("userName") || "";
   const userId = localStorage.getItem("userId") || "";
+  const token = localStorage.getItem("token") || "";
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/notifications`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotifications(res.data);
+      setUnreadCount(res.data.filter((n) => !n.read).length);
+    } catch (err) {
+      console.error("Failed to load notifications", err);
+    }
+  };
+
+  const markAllRead = async () => {
+    try {
+      await axios.put(
+        `${API_URL}/notifications/read`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+    } catch (err) {
+      console.error("Failed to mark notifications read", err);
+    }
+  };
+
+  useEffect(() => {
+    if (isLoggedIn()) fetchNotifications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
         setShowProfileMenu(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setShowNotif(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -33,6 +91,21 @@ const Navbar = () => {
       navigate(`/search?q=${searchQuery}`);
       setSearchQuery("");
     }
+  };
+
+  const handleBellClick = async () => {
+    const opening = !showNotif;
+    setShowNotif(opening);
+    if (opening) {
+      await fetchNotifications();
+      setUnreadCount(0);
+      markAllRead();
+    }
+  };
+
+  const handleNotifClick = (n) => {
+    setShowNotif(false);
+    if (n.article?._id) navigate(`/article/${n.article._id}`);
   };
 
   return (
@@ -76,14 +149,59 @@ const Navbar = () => {
               </svg>
               <span>Write</span>
             </Link>
-            <button className="navbar-icon bell-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
-                  fill="currentColor"
-                ></path>
-              </svg>
-            </button>
+
+            <div className="notif-menu" ref={notifRef}>
+              <button
+                className="navbar-icon bell-icon"
+                onClick={handleBellClick}
+                aria-label="Notifications"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+                {unreadCount > 0 && (
+                  <span className="notif-badge">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
+              </button>
+
+              <div className={`notif-dropdown ${showNotif ? "open" : ""}`}>
+                <div className="notif-header">Notifications</div>
+                {notifications.length === 0 ? (
+                  <p className="notif-empty">No notifications yet.</p>
+                ) : (
+                  notifications.map((n) => (
+                    <div
+                      key={n._id}
+                      className={`notif-item ${!n.read ? "unread" : ""}`}
+                      onClick={() => handleNotifClick(n)}
+                    >
+                      <div
+                        className="notif-avatar"
+                        style={{ background: getAvatarColor(n.sender?.name) }}
+                      >
+                        {getInitial(n.sender?.name)}
+                      </div>
+                      <div className="notif-body">
+                        <p className="notif-label">{notifLabel(n)}</p>
+                        {n.article?.title && (
+                          <p className="notif-article">{n.article.title}</p>
+                        )}
+                        {n.text && <p className="notif-snippet">{n.text}</p>}
+                        <span className="notif-time">
+                          {timeAgo(n.createdAt)}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
             <div className="profile-menu" ref={profileRef}>
               <div
                 className="profile-circle"

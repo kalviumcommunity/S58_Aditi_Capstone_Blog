@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Article = require("../models/Article");
 const authenticateToken = require("../middleware/authMiddleware");
+const createNotification = require("../utils/createNotification");
 
 router.get("/", async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -107,6 +108,13 @@ router.post("/:id/like", authenticateToken, async (req, res) => {
       article.likes = article.likes.filter((id) => id.toString() !== userId);
     } else {
       article.likes.push(userId);
+      // notify the author on a new like (not on unlike)
+      await createNotification({
+        recipient: article.author,
+        sender: userId,
+        type: "like",
+        article: article._id,
+      });
     }
 
     await article.save();
@@ -151,6 +159,16 @@ router.post("/:id/comment", authenticateToken, async (req, res) => {
     article.comments.push(newComment);
 
     await article.save();
+
+    // notify the article author about the new comment
+    await createNotification({
+      recipient: article.author,
+      sender: req.user.id,
+      type: "comment",
+      article: article._id,
+      text: text ? text.slice(0, 100) : "",
+    });
+
     res.json(article.comments);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -174,6 +192,15 @@ router.post(
 
       comment.replies.push({ user: req.user.id, text });
       await article.save();
+
+      // notify the author of the comment being replied to
+      await createNotification({
+        recipient: comment.user,
+        sender: req.user.id,
+        type: "reply",
+        article: article._id,
+        text: text ? text.slice(0, 100) : "",
+      });
 
       res.json(article.comments);
     } catch (err) {

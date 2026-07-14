@@ -26,6 +26,9 @@ app.use("/api/users", userRoutes);
 const searchRoutes = require("./routes/search");
 app.use("/api/search", searchRoutes);
 
+const notificationRoutes = require("./routes/notifications");
+app.use("/api/notifications", notificationRoutes);
+
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
