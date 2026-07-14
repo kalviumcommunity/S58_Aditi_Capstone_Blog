@@ -1,25 +1,40 @@
+<div align="center">
+
 # Familiar
 
-A Medium-style blogging platform where people can write, read, and respond to stories. Built with the MERN stack, with a focus on a clean editorial reading experience.
+**A Medium-style blogging platform for writing, reading, and responding to stories.**
 
-**Live:** [familiar-blog.vercel.app](https://familiar-blog.vercel.app)
+Built with the MERN stack and a focus on a clean, editorial reading experience.
+
+[**View Live →**](https://familiar-blog.vercel.app)
+
+<br />
+
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)
+
+</div>
 
 ---
 
-## About
+## ✦ About
 
 Familiar is a full-stack blogging app modeled on the reading and writing experience of Medium. Writers publish articles with a rich-text editor, readers follow authors and respond to stories, and everyone gets an editorial, distraction-free interface. It was built to be a complete, production-deployed application rather than a demo, covering authentication, email flows, a full engagement system, and a responsive front end.
 
-## Features
+## ✦ Features
 
-**Writing and reading**
+### Writing & Reading
 
 - Rich-text article editor (Quill) with title, description, and body
 - Home feed with infinite scroll
 - Full article pages with author byline, read-time estimate, and clean typography
 - Edit and delete your own articles
 
-**Engagement**
+### Engagement
 
 - Likes with optimistic UI updates
 - Bookmarks and a dedicated Saved page
@@ -27,63 +42,59 @@ Familiar is a full-stack blogging app modeled on the reading and writing experie
 - Comment and reply deletion (by the comment author or the article owner)
 - In-app notifications when someone likes, comments on, or replies to your work, with an unread badge that polls for updates
 
-**Social**
+### Social
 
-- User profiles with avatar, bio, and follower/following/story counts
+- User profiles with avatar, bio, and follower / following / story counts
 - Follow and unfollow other writers
 - Editable profiles
 
-**Accounts and auth**
+### Accounts & Auth
 
 - Email and password signup with hashed passwords (bcrypt)
 - Google OAuth login (Passport)
 - JWT-based sessions
 - Email verification on signup, with login blocked until the address is confirmed
 
-**Experience**
+### Experience
 
 - Responsive layout across desktop and mobile
 - Custom avatar system: colored circle with the user's initial, color derived from their name (no image uploads by design)
 
-## Tech Stack
+## ✦ Tech Stack
 
-**Frontend**
+| Layer        | Technologies                         |
+| ------------ | ------------------------------------ |
+| **Frontend** | React, Vite, React Router, plain CSS |
+| **Backend**  | Node.js, Express, Mongoose           |
+| **Database** | MongoDB                              |
+| **Auth**     | JWT, Passport (Google OAuth), bcrypt |
+| **Email**    | Resend                               |
+| **Hosting**  | Vercel (frontend), Render (backend)  |
 
-- React with Vite
-- React Router
-- Plain CSS (no utility framework)
-- Deployed on Vercel
+## ✦ Design
 
-**Backend**
+Familiar uses an editorial visual language, intentionally minimal and text-forward.
 
-- Node.js with Express
-- MongoDB with Mongoose
-- JWT and Passport (Google OAuth) for authentication
-- Resend for transactional email (verification)
-- Deployed on Render
+| Token            | Value                                                      |
+| ---------------- | ---------------------------------------------------------- |
+| **Accent**       | Oxblood `#5c1a2b`                                          |
+| **Display font** | Fraunces (serif)                                           |
+| **UI font**      | Inter                                                      |
+| **Avatars**      | Initial-based colored circles, hashed from the user's name |
 
-## Design
+## ✦ Architecture Notes
 
-Familiar uses an editorial visual language:
-
-- **Accent color:** oxblood (`#5c1a2b`)
-- **Display font:** Fraunces (serif)
-- **UI font:** Inter
-- **Avatars:** initial-based colored circles, hashed from the user's name
-
-The aesthetic is intentionally minimal and text-forward, prioritizing readability over chrome.
-
-## Architecture Notes
-
-- **Passwords** are hashed with bcrypt (never stored or transmitted in plaintext).
+- **Passwords** are hashed with bcrypt, never stored or transmitted in plaintext.
 - **Authentication** uses signed JWTs; the token carries only a user ID.
 - **Notifications** are created server-side when an engagement action occurs, skip self-actions, and are fetched on a lightweight client poll so the unread badge stays current without a full page refresh.
 - **Email verification** gates login: unverified accounts cannot sign in.
 
-## Status
+## ✦ Status
 
-Familiar is live and actively maintained. It began as a coursework project and has since been extended well beyond its original scope into a fuller product, with notifications, refined responsive design, and ongoing improvements to the account and engagement systems.
+Familiar is live and actively maintained. It has grown well beyond its original scope into a fuller product, with notifications, refined responsive design, and ongoing improvements to the account and engagement systems.
 
-## License
+---
 
-This project is available for viewing and reference. Please reach out before reusing substantial portions.
+<div align="center">
+<sub>Built by Aditi · <a href="https://familiar-blog.vercel.app">familiar-blog.vercel.app</a></sub>
+</div>
