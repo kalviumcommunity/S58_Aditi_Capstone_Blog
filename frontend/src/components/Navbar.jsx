@@ -115,7 +115,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
+    <nav className={`navbar ${isLoggedIn() ? "navbar-auth" : "navbar-guest"}`}>
       {/* Left - Logo and Search */}
       <div className="navbar-left">
         <Link to="/" className="navbar-logo">

@@ -399,3 +399,21 @@ a {
   font-size: 11px;
   color: #b0b0b0;
 }
+
+/* logged out, the auth buttons need the room more than search does */
+.navbar-guest .simple-search-form {
+  display: none;
+}
+
+.navbar-link,
+.get-started-btn {
+  white-space: nowrap;
+}
+
+.navbar-link {
+  padding: 6px 8px;
+}
+
+.get-started-btn {
+  padding: 8px 14px;
+}
