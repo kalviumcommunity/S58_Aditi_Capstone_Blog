@@ -54,6 +54,7 @@ Familiar is a full-stack blogging app modeled on the reading and writing experie
 - Google OAuth login (Passport)
 - JWT-based sessions
 - Email verification on signup, with login blocked until the address is confirmed
+- Password reset via emailed link, with a 1-hour expiry
 
 ### Experience
 
@@ -88,6 +89,7 @@ Familiar uses an editorial visual language, intentionally minimal and text-forwa
 - **Authentication** uses signed JWTs; the token carries only a user ID.
 - **Notifications** are created server-side when an engagement action occurs, skip self-actions, and are fetched on a lightweight client poll so the unread badge stays current without a full page refresh.
 - **Email verification** gates login: unverified accounts cannot sign in.
+- **Password reset** returns an identical response whether or not an account exists, preventing account enumeration. Tokens expire after an hour and are cleared on use.
 
 ## ✦ Status
 
