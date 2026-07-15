@@ -57,13 +57,39 @@ const ForgotPassword = () => {
             </Link>
           </div>
 
-          <h1 className="auth-title">Forgot your password?</h1>
-          <p className="auth-sub">
-            Enter your email and we&apos;ll send you a reset link.
-          </p>
+          {!message ? (
+            <>
+              <h1 className="auth-title">Forgot your password?</h1>
+              <p className="auth-sub">
+                Enter your email and we&apos;ll send you a reset link.
+              </p>
+            </>
+          ) : null}
 
           {error && <p className="auth-error">{error}</p>}
-          {message && <p className="auth-success">{message}</p>}
+
+          {message && (
+            <div className="auth-confirm">
+              <div className="auth-confirm-icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M4 4h16v16H4z" opacity="0" />
+                  <path d="M22 6l-10 7L2 6" />
+                  <path d="M2 6h20v12H2z" />
+                </svg>
+              </div>
+              <h1 className="auth-title">Check your inbox</h1>
+              <p className="auth-confirm-text">{message}</p>
+            </div>
+          )}
 
           {!message && (
             <form onSubmit={handleSubmit}>

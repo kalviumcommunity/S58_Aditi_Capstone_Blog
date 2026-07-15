@@ -157,6 +157,24 @@ router.post("/reset-password/:token", async (req, res) => {
   }
 });
 
+// Check whether a reset token is still valid (gates the reset form on page load)
+router.get("/reset-password/:token/check", async (req, res) => {
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: req.params.token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ valid: false });
+    }
+
+    res.json({ valid: true });
+  } catch (err) {
+    res.status(500).json({ valid: false });
+  }
+});
+
 // google Oauth Routes
 router.get(
   "/google",

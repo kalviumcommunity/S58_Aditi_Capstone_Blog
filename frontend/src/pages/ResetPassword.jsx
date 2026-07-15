@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { API_URL } from "../config";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -12,6 +12,23 @@ const ResetPassword = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(true);
+  const [tokenValid, setTokenValid] = useState(false);
+
+  // Check the link the moment the page loads, so a dead link never shows a form
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        await axios.get(`${API_URL}/auth/reset-password/${token}/check`);
+        setTokenValid(true);
+      } catch {
+        setTokenValid(false);
+      } finally {
+        setChecking(false);
+      }
+    };
+    checkToken();
+  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +51,6 @@ const ResetPassword = () => {
         { password },
       );
       setMessage(data.message);
-      // send them to login after a moment
       setTimeout(() => navigate("/login", { replace: true }), 1500);
     } catch (err) {
       setError(
@@ -62,46 +78,86 @@ const ResetPassword = () => {
 
       <main className="auth-right">
         <div className="auth-card">
-          <h1 className="auth-title">Set a new password</h1>
-          <p className="auth-sub">Choose something you&apos;ll remember.</p>
+          {checking && <p className="auth-sub">Checking your link...</p>}
 
-          {error && <p className="auth-error">{error}</p>}
-          {message && <p className="auth-success">{message}</p>}
-
-          {!message && (
-            <form onSubmit={handleSubmit}>
-              <div className="auth-field">
-                <label htmlFor="password">New password</label>
-                <input
-                  id="password"
-                  type="password"
-                  name="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="auth-field">
-                <label htmlFor="confirm">Confirm password</label>
-                <input
-                  id="confirm"
-                  type="password"
-                  name="confirm"
-                  placeholder="••••••••"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  required
-                />
+          {!checking && !tokenValid && (
+            <>
+              <div className="auth-confirm">
+                <div className="auth-confirm-icon">
+                  <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7v5l3 2" />
+                  </svg>
+                </div>
+                <h1 className="auth-title">This link has expired</h1>
+                <p className="auth-confirm-text">
+                  Reset links are only good for an hour. Request a fresh one and
+                  we&apos;ll send it right over.
+                </p>
               </div>
               <button
-                type="submit"
                 className="auth-btn auth-btn-primary"
-                disabled={loading}
+                onClick={() => navigate("/forgot-password")}
+                style={{ marginTop: "20px" }}
               >
-                {loading ? "Updating..." : "Update password"}
+                Request a new link
               </button>
-            </form>
+            </>
+          )}
+
+          {!checking && tokenValid && (
+            <>
+              <h1 className="auth-title">Set a new password</h1>
+              <p className="auth-sub">Choose something you&apos;ll remember.</p>
+
+              {error && <p className="auth-error">{error}</p>}
+              {message && <p className="auth-confirm-text">{message}</p>}
+
+              {!message && (
+                <form onSubmit={handleSubmit}>
+                  <div className="auth-field">
+                    <label htmlFor="password">New password</label>
+                    <input
+                      id="password"
+                      type="password"
+                      name="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="auth-field">
+                    <label htmlFor="confirm">Confirm password</label>
+                    <input
+                      id="confirm"
+                      type="password"
+                      name="confirm"
+                      placeholder="••••••••"
+                      value={confirm}
+                      onChange={(e) => setConfirm(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="auth-btn auth-btn-primary"
+                    disabled={loading}
+                  >
+                    {loading ? "Updating..." : "Update password"}
+                  </button>
+                </form>
+              )}
+            </>
           )}
 
           <p className="auth-foot">
