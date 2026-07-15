@@ -13,7 +13,7 @@ const sendVerificationEmail = async (to, token) => {
       <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
         <h2 style="color: #242424;">Welcome to Familiar</h2>
         <p style="color: #444; line-height: 1.5;">
-          Confirm your email to start reading and writing. This link expires in 24 hours.
+          Confirm your email to start reading and writing.
         </p>
         <a href="${verifyUrl}"
            style="display: inline-block; background: #5c1a2b; color: #fff;
