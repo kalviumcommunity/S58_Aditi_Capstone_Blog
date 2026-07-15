@@ -15,6 +15,15 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Google refuses OAuth inside embedded in-app browsers (LinkedIn, WhatsApp, Instagram...).
+  // Nothing we can do about it, so don't offer a button that's guaranteed to fail.
+  const isInAppBrowser = () => {
+    const ua = navigator.userAgent || "";
+    return /FBAN|FBAV|Instagram|LinkedInApp|WhatsApp|Snapchat|Pinterest|Line\/|Twitter/i.test(
+      ua,
+    );
+  };
+
   // If your API_URL includes '/api', this is correct:
   const GOOGLE_URL = `${API_URL}/auth/google`;
 
@@ -155,27 +164,35 @@ const Login = () => {
 
           <div className="auth-divider">or</div>
 
-          <button onClick={handleGoogleLogin} className="auth-btn-google">
-            <svg viewBox="0 0 48 48">
-              <path
-                fill="#EA4335"
-                d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.1 0 24 0 14.6 0 6.4 5.4 2.5 13.3l7.8 6.1C12.2 13.6 17.6 9.5 24 9.5z"
-              />
-              <path
-                fill="#4285F4"
-                d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.5 3-2.2 5.5-4.7 7.2l7.3 5.7c4.3-4 6.7-9.8 6.7-17.4z"
-              />
-              <path
-                fill="#FBBC05"
-                d="M10.3 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6l-7.8-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.5 10.7l7.8-6.1z"
-              />
-              <path
-                fill="#34A853"
-                d="M24 48c6.1 0 11.3-2 15-5.5l-7.3-5.7c-2 1.4-4.7 2.3-7.7 2.3-6.4 0-11.8-4.1-13.7-9.9l-7.8 6.1C6.4 42.6 14.6 48 24 48z"
-              />
-            </svg>
-            Continue with Google
-          </button>
+          {isInAppBrowser() ? (
+            <p className="auth-inapp-note">
+              Google sign-in needs a full browser. Tap the ••• menu and choose
+              &ldquo;Open in Safari&rdquo;, or use your email and password
+              above.
+            </p>
+          ) : (
+            <button onClick={handleGoogleLogin} className="auth-btn-google">
+              <svg viewBox="0 0 48 48">
+                <path
+                  fill="#EA4335"
+                  d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.1 0 24 0 14.6 0 6.4 5.4 2.5 13.3l7.8 6.1C12.2 13.6 17.6 9.5 24 9.5z"
+                />
+                <path
+                  fill="#4285F4"
+                  d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.5 3-2.2 5.5-4.7 7.2l7.3 5.7c4.3-4 6.7-9.8 6.7-17.4z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M10.3 28.6c-.5-1.4-.7-2.9-.7-4.6s.3-3.2.7-4.6l-7.8-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.5 10.7l7.8-6.1z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M24 48c6.1 0 11.3-2 15-5.5l-7.3-5.7c-2 1.4-4.7 2.3-7.7 2.3-6.4 0-11.8-4.1-13.7-9.9l-7.8 6.1C6.4 42.6 14.6 48 24 48z"
+                />
+              </svg>
+              Continue with Google
+            </button>
+          )}
 
           <p className="auth-foot">
             New to Familiar? <Link to="/signup">Create an account</Link>

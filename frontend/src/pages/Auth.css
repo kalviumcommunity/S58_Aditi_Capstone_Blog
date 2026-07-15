@@ -372,3 +372,14 @@ body {
   line-height: 1.5;
   margin: 0;
 }
+
+.auth-inapp-note {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--auth-muted);
+  background: #f7f5f0;
+  border: 1px solid var(--auth-line);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin: 0;
+}
