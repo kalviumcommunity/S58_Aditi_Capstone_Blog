@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   bio: { type: String },
   isVerified: { type: Boolean, default: false },
   verificationToken: { type: String },
+  verificationTokenExpires: { type: Date },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

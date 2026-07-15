@@ -9,13 +9,14 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendMsg, setResendMsg] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
   // If your API_URL includes '/api', this is correct:
   const GOOGLE_URL = `${API_URL}/auth/google`;
-  // If you later change API_URL to be origin-only (no '/api'), switch to:
-  // const GOOGLE_URL = `${API_URL}/api/auth/google`;
 
   const handleGoogleLogin = () => {
     window.location.href = GOOGLE_URL;
@@ -25,23 +26,37 @@ const Login = () => {
     setFormData((s) => ({ ...s, [e.target.name]: e.target.value }));
   };
 
+  const handleResend = async () => {
+    setResending(true);
+    setResendMsg("");
+    try {
+      const { data } = await axios.post(`${API_URL}/auth/resend-verification`, {
+        email: formData.email,
+      });
+      setResendMsg(data.message);
+    } catch {
+      setResendMsg("Couldn't send right now. Try again in a moment.");
+    } finally {
+      setResending(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setNeedsVerification(false);
+    setResendMsg("");
     setLoading(true);
 
     try {
-      // NOTE: API_URL already has '/api', so '/auth/login' is correct
       const { data } = await axios.post(`${API_URL}/auth/login`, formData, {
         headers: { "Content-Type": "application/json" },
       });
 
-      // store token + user id + name
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.user?._id || "");
       localStorage.setItem("userName", data.user?.name || "");
 
-      // go back to where user tried to go, or home
       const to = location.state?.from?.pathname || "/";
       navigate(to, { replace: true });
     } catch (err) {
@@ -51,6 +66,8 @@ const Login = () => {
           ? "Network error: API unreachable"
           : "Login failed");
       setError(msg);
+      // 403 means the account exists but hasn't been verified yet
+      setNeedsVerification(err.response?.status === 403);
       setLoading(false);
     }
   };
@@ -81,6 +98,23 @@ const Login = () => {
           <p className="auth-sub">Sign in to keep reading and writing.</p>
 
           {error && <p className="auth-error">{error}</p>}
+
+          {needsVerification && (
+            <div className="auth-resend">
+              {resendMsg ? (
+                <p className="auth-resend-note">{resendMsg}</p>
+              ) : (
+                <button
+                  type="button"
+                  className="auth-resend-btn"
+                  onClick={handleResend}
+                  disabled={resending}
+                >
+                  {resending ? "Sending..." : "Resend verification email"}
+                </button>
+              )}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             <div className="auth-field">

@@ -43,8 +43,12 @@ const VerifyEmail = () => {
         {status === "error" && (
           <>
             <p className="verify-text verify-error">{message}</p>
-            <Link to="/signup" className="verify-btn">
-              Back to sign up
+            <p className="verify-text">
+              Sign in with your email and password and we&apos;ll offer you a
+              fresh link.
+            </p>
+            <Link to="/login" className="verify-btn">
+              Go to sign in
             </Link>
           </>
         )}

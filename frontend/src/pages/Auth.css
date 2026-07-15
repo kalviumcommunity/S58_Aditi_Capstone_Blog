@@ -340,3 +340,35 @@ body {
   margin: 0;
   max-width: 34ch;
 }
+
+.auth-resend {
+  margin: -8px 0 20px;
+}
+
+.auth-resend-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: "Inter";
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #5c1a2b;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+}
+
+.auth-resend-btn:hover {
+  border-bottom-color: #5c1a2b;
+}
+
+.auth-resend-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-resend-note {
+  font-size: 13.5px;
+  color: var(--auth-muted);
+  line-height: 1.5;
+  margin: 0;
+}

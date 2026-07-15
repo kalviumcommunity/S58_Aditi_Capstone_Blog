@@ -9,6 +9,8 @@ const { sendVerificationEmail, sendResetEmail } = require("../utils/sendEmail");
 const router = express.Router();
 require("../config/passport");
 
+const VERIFY_WINDOW = 24 * 60 * 60 * 1000; // 24 hours
+
 //sign up
 router.post("/signup", async (req, res) => {
   const { name, email, password } = req.body;
@@ -25,6 +27,7 @@ router.post("/signup", async (req, res) => {
       email,
       password: hashedPassword,
       verificationToken,
+      verificationTokenExpires: Date.now() + VERIFY_WINDOW,
       isVerified: false,
     });
     await newUser.save();
@@ -79,21 +82,53 @@ router.post("/login", async (req, res) => {
 // Verify email
 router.get("/verify/:token", async (req, res) => {
   try {
-    const user = await User.findOne({ verificationToken: req.params.token });
+    const user = await User.findOne({
+      verificationToken: req.params.token,
+      verificationTokenExpires: { $gt: Date.now() },
+    });
 
     if (!user) {
       return res
         .status(400)
-        .json({ message: "Invalid or expired verification link" });
+        .json({ message: "This verification link is invalid or has expired." });
     }
 
     user.isVerified = true;
     user.verificationToken = undefined;
+    user.verificationTokenExpires = undefined;
     await user.save();
 
     res.json({ message: "Email verified. You can now log in." });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+// Resend verification email
+router.post("/resend-verification", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+
+    // Only act if the account exists AND is still unverified.
+    // Respond identically either way, so this can't be used to probe accounts.
+    if (user && !user.isVerified) {
+      const verificationToken = crypto.randomBytes(32).toString("hex");
+      user.verificationToken = verificationToken;
+      user.verificationTokenExpires = Date.now() + VERIFY_WINDOW;
+      await user.save();
+
+      sendVerificationEmail(email, verificationToken).catch((mailErr) => {
+        console.error("Failed to resend verification email:", mailErr);
+      });
+    }
+
+    res.json({
+      message:
+        "If that account still needs verifying, a new link is on its way.",
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
   }
 });
 
