@@ -15,13 +15,33 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        const email = profile.emails[0].value;
+
+        // 1. Already linked to this Google account
         let user = await User.findOne({ googleId: profile.id });
 
+        // 2. Not linked yet, but an account with this email exists — link them
+        if (!user) {
+          user = await User.findOne({ email });
+          if (user) {
+            user.googleId = profile.id;
+            // Google has already confirmed this address, so trust it
+            if (!user.isVerified) {
+              user.isVerified = true;
+              user.verificationToken = undefined;
+              user.verificationTokenExpires = undefined;
+            }
+            await user.save();
+          }
+        }
+
+        // 3. No account at all — create one
         if (!user) {
           user = new User({
             googleId: profile.id,
             name: profile.displayName,
-            email: profile.emails[0].value,
+            email,
+            isVerified: true,
           });
           await user.save();
         }
@@ -30,7 +50,6 @@ passport.use(
           expiresIn: "1h",
         });
 
-        // ✅ Pass both user and token manually to callback
         done(null, { user, token });
       } catch (err) {
         done(err, false);
