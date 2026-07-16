@@ -417,3 +417,26 @@ a {
 .get-started-btn {
   padding: 8px 14px;
 }
+
+.notif-delete {
+  flex-shrink: 0;
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 4px;
+  margin: -2px -4px 0 0;
+  border-radius: 50%;
+  color: #c4c4c4;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+
+.notif-delete:hover {
+  color: #b42318;
+  background: rgba(180, 35, 24, 0.08);
+}

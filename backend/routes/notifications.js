@@ -31,4 +31,23 @@ router.put("/read", authenticateToken, async (req, res) => {
   }
 });
 
+// Delete a single notification
+router.delete("/:id", authenticateToken, async (req, res) => {
+  try {
+    // matching on recipient is the authorization: you can only delete your own
+    const deleted = await Notification.findOneAndDelete({
+      _id: req.params.id,
+      recipient: req.user.id,
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+
+    res.json({ message: "Notification deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

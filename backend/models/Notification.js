@@ -29,4 +29,10 @@ const notificationSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// MongoDB deletes these on its own once they're a week old
+notificationSchema.index(
+  { createdAt: 1 },
+  { expireAfterSeconds: 7 * 24 * 60 * 60 },
+);
+
 module.exports = mongoose.model("Notification", notificationSchema);

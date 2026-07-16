@@ -62,6 +62,27 @@ const Navbar = () => {
     }
   };
 
+  const handleDeleteNotif = async (e, id) => {
+    // the row itself is clickable, so stop the click before it navigates
+    e.stopPropagation();
+
+    const previous = notifications;
+    // drop it straight away, put it back if the request fails
+    const next = notifications.filter((n) => n._id !== id);
+    setNotifications(next);
+    setUnreadCount(next.filter((n) => !n.read).length);
+
+    try {
+      await axios.delete(`${API_URL}/notifications/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (err) {
+      console.error("Failed to delete notification", err);
+      setNotifications(previous);
+      setUnreadCount(previous.filter((n) => !n.read).length);
+    }
+  };
+
   useEffect(() => {
     if (!isLoggedIn()) return;
 
@@ -202,6 +223,23 @@ const Navbar = () => {
                           {timeAgo(n.createdAt)}
                         </span>
                       </div>
+                      <button
+                        className="notif-delete"
+                        onClick={(e) => handleDeleteNotif(e, n._id)}
+                        aria-label="Delete notification"
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        >
+                          <path d="M18 6 6 18M6 6l12 12" />
+                        </svg>
+                      </button>
                     </div>
                   ))
                 )}
